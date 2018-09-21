@@ -17,14 +17,13 @@ import org.junit.Test;
 import org.nhind.config.client.SpringBaseTest;
 import org.nhind.config.testbase.BaseTestPlan;
 import org.nhind.config.testbase.TestUtils;
-
+import org.nhindirect.common.cert.Thumbprint;
 import org.nhindirect.common.rest.exceptions.ServiceException;
 import org.nhindirect.common.rest.exceptions.ServiceMethodException;
 
 import org.nhindirect.config.model.Anchor;
 import org.nhindirect.config.model.EntityStatus;
 import org.nhindirect.config.store.dao.AnchorDao;
-import org.nhindirect.stagent.cert.Thumbprint;
 
 public class DefaultAnchorService_getAnchorsForOwnerTest extends SpringBaseTest
 {

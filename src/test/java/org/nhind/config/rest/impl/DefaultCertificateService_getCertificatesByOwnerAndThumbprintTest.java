@@ -19,7 +19,7 @@ import org.junit.Test;
 import org.nhind.config.client.SpringBaseTest;
 import org.nhind.config.testbase.BaseTestPlan;
 import org.nhind.config.testbase.TestUtils;
-
+import org.nhindirect.common.cert.Thumbprint;
 import org.nhindirect.common.rest.exceptions.ServiceException;
 import org.nhindirect.common.rest.exceptions.ServiceMethodException;
 
@@ -29,7 +29,6 @@ import org.nhindirect.config.model.utils.CertUtils;
 import org.nhindirect.config.model.utils.CertUtils.CertContainer;
 
 import org.nhindirect.config.store.dao.CertificateDao;
-import org.nhindirect.stagent.cert.Thumbprint;
 
 public class DefaultCertificateService_getCertificatesByOwnerAndThumbprintTest extends SpringBaseTest
 {
