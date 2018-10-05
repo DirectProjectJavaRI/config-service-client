@@ -3,8 +3,8 @@ package org.nhind.config.rest.impl;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -20,7 +20,7 @@ import org.nhindirect.common.rest.exceptions.ServiceMethodException;
 import org.nhindirect.config.model.Address;
 import org.nhindirect.config.model.Domain;
 import org.nhindirect.config.model.EntityStatus;
-import org.nhindirect.config.store.dao.DomainDao;
+import org.nhindirect.config.repository.DomainRepository;
 
 public class DefaultDomainService_deleteDomainTest extends SpringBaseTest
 {
@@ -106,7 +106,7 @@ public class DefaultDomainService_deleteDomainTest extends SpringBaseTest
 				@Override
 				protected void doAssertions() throws Exception
 				{
-					assertNull(domainDao.getDomainByName("@test.com"));
+					assertNull(domainRepo.findByDomainNameIgnoreCase("@test.com"));
 				}
 			}.perform();
 		}
@@ -161,10 +161,10 @@ public class DefaultDomainService_deleteDomainTest extends SpringBaseTest
 					try
 					{
 						super.setupMocks();
-						DomainDao mockDAO = mock(DomainDao.class);
-						doThrow(new RuntimeException()).when(mockDAO).getDomainByName(eq("test.com"));
+						DomainRepository mockDAO = mock(DomainRepository.class);
+						doThrow(new RuntimeException()).when(mockDAO).findByDomainNameIgnoreCase(eq("test.com"));
 						
-						domainResource.setDomainDao(mockDAO);
+						domainResource.setDomainRepository(mockDAO);
 					}
 					catch (Throwable t)
 					{
@@ -177,7 +177,7 @@ public class DefaultDomainService_deleteDomainTest extends SpringBaseTest
 				{
 					super.tearDownMocks();
 					
-					domainResource.setDomainDao(domainDao);
+					domainResource.setDomainRepository(domainRepo);
 				}
 				
 				
@@ -214,11 +214,11 @@ public class DefaultDomainService_deleteDomainTest extends SpringBaseTest
 					try
 					{
 						super.setupMocks();
-						DomainDao mockDAO = mock(DomainDao.class);
-						when(mockDAO.getDomainByName((String)any())).thenReturn(new org.nhindirect.config.store.Domain());
-						doThrow(new RuntimeException()).when(mockDAO).delete(eq("test.com"));
+						DomainRepository mockDAO = mock(DomainRepository.class);
+						when(mockDAO.findByDomainNameIgnoreCase((String)any())).thenReturn(new org.nhindirect.config.store.Domain());
+						doThrow(new RuntimeException()).when(mockDAO).deleteByDomainNameIgnoreCase(eq("test.com"));
 						
-						domainResource.setDomainDao(mockDAO);
+						domainResource.setDomainRepository(mockDAO);
 					}
 					catch (Throwable t)
 					{
@@ -231,7 +231,7 @@ public class DefaultDomainService_deleteDomainTest extends SpringBaseTest
 				{
 					super.tearDownMocks();
 					
-					domainResource.setDomainDao(domainDao);
+					domainResource.setDomainRepository(domainRepo);
 				}
 				
 				

@@ -2,7 +2,7 @@ package org.nhind.config.rest.impl;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 
@@ -21,8 +21,7 @@ import org.nhindirect.common.rest.exceptions.ServiceMethodException;
 
 import org.nhindirect.config.model.Certificate;
 import org.nhindirect.config.model.utils.CertUtils;
-
-import org.nhindirect.config.store.dao.CertificateDao;
+import org.nhindirect.config.repository.CertificateRepository;
 
 public class DefaultCertificateService_deleteCertificateByOwnerTest extends SpringBaseTest
 {
@@ -120,7 +119,7 @@ public class DefaultCertificateService_deleteCertificateByOwnerTest extends Spri
 			@Override
 			protected void doAssertions() throws Exception
 			{
-				final Collection<org.nhindirect.config.store.Certificate> certs = certDao.list((String)null);
+				final Collection<org.nhindirect.config.store.Certificate> certs = certRepo.findAll();
 				assertEquals(1, certs.size());
 			}
 		}.perform();
@@ -165,7 +164,7 @@ public class DefaultCertificateService_deleteCertificateByOwnerTest extends Spri
 			@Override
 			protected void doAssertions() throws Exception
 			{
-				final Collection<org.nhindirect.config.store.Certificate> certs = certDao.list((String)null);
+				final Collection<org.nhindirect.config.store.Certificate> certs = certRepo.findAll();
 				assertEquals(0, certs.size());
 			}
 		}.perform();
@@ -183,10 +182,10 @@ public class DefaultCertificateService_deleteCertificateByOwnerTest extends Spri
 				try
 				{
 					super.setupMocks();
-					CertificateDao mockDAO = mock(CertificateDao.class);
-					doThrow(new RuntimeException()).when(mockDAO).delete((String)any());
+					CertificateRepository mockDAO = mock(CertificateRepository.class);
+					doThrow(new RuntimeException()).when(mockDAO).deleteByOwnerIgnoreCase((String)any());
 					
-					certResource.setCertificateDao(mockDAO);
+					certResource.setCertificateRepository(mockDAO);
 				}
 				catch (Throwable t)
 				{
@@ -199,7 +198,7 @@ public class DefaultCertificateService_deleteCertificateByOwnerTest extends Spri
 			{
 				super.tearDownMocks();
 				
-				certResource.setCertificateDao(certDao);
+				certResource.setCertificateRepository(certRepo);
 			}			
 			
 			@Override

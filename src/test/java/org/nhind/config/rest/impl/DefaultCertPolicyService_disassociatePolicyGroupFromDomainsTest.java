@@ -2,8 +2,7 @@ package org.nhind.config.rest.impl;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -22,8 +21,8 @@ import org.nhindirect.config.model.CertPolicy;
 import org.nhindirect.config.model.CertPolicyGroup;
 import org.nhindirect.config.model.Domain;
 import org.nhindirect.config.model.EntityStatus;
-import org.nhindirect.config.store.dao.CertPolicyDao;
-import org.nhindirect.config.store.dao.DomainDao;
+import org.nhindirect.config.repository.CertPolicyGroupDomainReltnRepository;
+import org.nhindirect.config.repository.CertPolicyGroupRepository;
 
 public class DefaultCertPolicyService_disassociatePolicyGroupFromDomainsTest extends SpringBaseTest
 {
@@ -160,9 +159,9 @@ public class DefaultCertPolicyService_disassociatePolicyGroupFromDomainsTest ext
 			@Override
 			protected void doAssertions() throws Exception
 			{
-				final org.nhindirect.config.store.Domain domain = domainDao.getDomainByName(getDomainNameToAssociate());
+				final org.nhindirect.config.store.Domain domain = domainRepo.findByDomainNameIgnoreCase(getDomainNameToAssociate());
 				
-				final Collection<org.nhindirect.config.store.CertPolicyGroupDomainReltn> reltns = policyDao.getPolicyGroupsByDomain(domain.getId());
+				final Collection<org.nhindirect.config.store.CertPolicyGroupDomainReltn> reltns = groupReltnRepo.findByDomain(domain);
 				
 				assertEquals(0, reltns.size());
 			}
@@ -203,10 +202,10 @@ public class DefaultCertPolicyService_disassociatePolicyGroupFromDomainsTest ext
 				try
 				{
 					super.setupMocks();
-					CertPolicyDao mockDAO = mock(CertPolicyDao.class);
-					doThrow(new RuntimeException()).when(mockDAO).getPolicyGroupByName((String)any());
+					CertPolicyGroupRepository mockDAO = mock(CertPolicyGroupRepository.class);
+					doThrow(new RuntimeException()).when(mockDAO).findByPolicyGroupNameIgnoreCase((String)any());
 					
-					certPolResource.setCertPolicyDao(mockDAO);
+					certPolResource.setCertPolicyGroupRepository(mockDAO);
 				}
 				catch (Throwable t)
 				{
@@ -219,7 +218,7 @@ public class DefaultCertPolicyService_disassociatePolicyGroupFromDomainsTest ext
 			{
 				super.tearDownMocks();
 				
-				certPolResource.setCertPolicyDao(policyDao);
+				certPolResource.setCertPolicyGroupRepository(policyGroupRepo);
 			}
 			
 			@Override
@@ -262,14 +261,14 @@ public class DefaultCertPolicyService_disassociatePolicyGroupFromDomainsTest ext
 				try
 				{
 					super.setupMocks();
-					CertPolicyDao mockPolicyDAO = mock(CertPolicyDao.class);
-					DomainDao mockDomainDAO = mock(DomainDao.class);
+					CertPolicyGroupRepository mockPolicyDAO = mock(CertPolicyGroupRepository.class);
+					CertPolicyGroupDomainReltnRepository mockDomainDAO = mock(CertPolicyGroupDomainReltnRepository.class);
 					
-					when(mockPolicyDAO.getPolicyGroupByName("Group1")).thenReturn(new org.nhindirect.config.store.CertPolicyGroup());
-					doThrow(new RuntimeException()).when(mockPolicyDAO).disassociatePolicyGroupFromDomains(eq(0L));
+					when(mockPolicyDAO.findByPolicyGroupNameIgnoreCase("Group1")).thenReturn(new org.nhindirect.config.store.CertPolicyGroup());
+					doThrow(new RuntimeException()).when(mockDomainDAO).deleteByCertPolicyGroup((org.nhindirect.config.store.CertPolicyGroup)any());
 					
-					certPolResource.setCertPolicyDao(mockPolicyDAO);
-					certPolResource.setDomainDao(mockDomainDAO);
+					certPolResource.setCertPolicyGroupRepository(mockPolicyDAO);
+					certPolResource.setCertPolicyGroupDomainReltnRepository(mockDomainDAO);
 				}
 				catch (Throwable t)
 				{
@@ -282,8 +281,8 @@ public class DefaultCertPolicyService_disassociatePolicyGroupFromDomainsTest ext
 			{
 				super.tearDownMocks();
 				
-				certPolResource.setCertPolicyDao(policyDao);
-				certPolResource.setDomainDao(domainDao);
+				certPolResource.setCertPolicyGroupRepository(policyGroupRepo);
+				certPolResource.setCertPolicyGroupDomainReltnRepository(groupReltnRepo);
 			}
 			
 			@Override

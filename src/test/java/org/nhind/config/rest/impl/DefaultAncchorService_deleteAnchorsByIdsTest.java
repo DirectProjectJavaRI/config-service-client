@@ -2,7 +2,7 @@ package org.nhind.config.rest.impl;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 
@@ -20,8 +20,7 @@ import org.nhindirect.common.rest.exceptions.ServiceMethodException;
 
 import org.nhindirect.config.model.Anchor;
 import org.nhindirect.config.model.EntityStatus;
-
-import org.nhindirect.config.store.dao.AnchorDao;
+import org.nhindirect.config.repository.AnchorRepository;
 
 public class DefaultAncchorService_deleteAnchorsByIdsTest extends SpringBaseTest
 {
@@ -126,7 +125,7 @@ public class DefaultAncchorService_deleteAnchorsByIdsTest extends SpringBaseTest
 			@Override
 			protected Collection<Long> getIdsToRemove()
 			{
-				final Collection<org.nhindirect.config.store.Anchor> anchors = anchorDao.listAll();
+				final Collection<org.nhindirect.config.store.Anchor> anchors = anchorRepo.findAll();
 				
 				final Collection<Long> ids = new ArrayList<Long>();
 				for (org.nhindirect.config.store.Anchor anchor : anchors)
@@ -138,7 +137,7 @@ public class DefaultAncchorService_deleteAnchorsByIdsTest extends SpringBaseTest
 			@Override
 			protected void doAssertions() throws Exception
 			{
-				final Collection<org.nhindirect.config.store.Anchor> anchors = anchorDao.listAll();
+				final Collection<org.nhindirect.config.store.Anchor> anchors = anchorRepo.findAll();
 				assertTrue(anchors.isEmpty());
 			}
 		}.perform();
@@ -188,7 +187,7 @@ public class DefaultAncchorService_deleteAnchorsByIdsTest extends SpringBaseTest
 			@Override
 			protected Collection<Long> getIdsToRemove()
 			{
-				final Collection<org.nhindirect.config.store.Anchor> anchors = anchorDao.listAll();
+				final Collection<org.nhindirect.config.store.Anchor> anchors = anchorRepo.findAll();
 				
 				final Collection<Long> ids = new ArrayList<Long>();
 
@@ -200,7 +199,7 @@ public class DefaultAncchorService_deleteAnchorsByIdsTest extends SpringBaseTest
 			@Override
 			protected void doAssertions() throws Exception
 			{
-				final Collection<org.nhindirect.config.store.Anchor> anchors = anchorDao.listAll();
+				final Collection<org.nhindirect.config.store.Anchor> anchors = anchorRepo.findAll();
 				assertEquals(1, anchors.size());
 			}
 		}.perform();
@@ -219,10 +218,10 @@ public class DefaultAncchorService_deleteAnchorsByIdsTest extends SpringBaseTest
 				{
 					super.setupMocks();
 
-					AnchorDao mockDAO = mock(AnchorDao.class);
-					doThrow(new RuntimeException()).when(mockDAO).delete((List<Long>)any());
+					AnchorRepository mockDAO = mock(AnchorRepository.class);
+					doThrow(new RuntimeException()).when(mockDAO).deleteByIdIn((List<Long>)any());
 					
-					anchorResource.setAnchorDao(mockDAO);
+					anchorResource.setAnchorRepository(mockDAO);
 				}
 				catch (Throwable t)
 				{
@@ -241,7 +240,7 @@ public class DefaultAncchorService_deleteAnchorsByIdsTest extends SpringBaseTest
 			{
 				super.tearDownMocks();
 				
-				anchorResource.setAnchorDao(anchorDao);
+				anchorResource.setAnchorRepository(anchorRepo);
 			}
 			
 			@Override

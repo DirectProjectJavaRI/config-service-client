@@ -3,7 +3,7 @@ package org.nhind.config.rest.impl;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 
@@ -17,7 +17,7 @@ import org.nhindirect.common.rest.exceptions.ServiceMethodException;
 import org.nhindirect.config.model.Address;
 import org.nhindirect.config.model.Domain;
 import org.nhindirect.config.model.EntityStatus;
-import org.nhindirect.config.store.dao.DomainDao;
+import org.nhindirect.config.repository.DomainRepository;
 
 
 public class DefaultDomainService_addDomainTest extends SpringBaseTest
@@ -115,7 +115,7 @@ public class DefaultDomainService_addDomainTest extends SpringBaseTest
 				org.nhindirect.config.store.Domain domain = new org.nhindirect.config.store.Domain();
 				domain.setDomainName("test.com");
 				domain.setStatus(org.nhindirect.config.store.EntityStatus.ENABLED);
-				domainDao.add(domain);
+				domainRepo.save(domain);
 				
 			}
 			
@@ -158,10 +158,10 @@ public class DefaultDomainService_addDomainTest extends SpringBaseTest
 				try
 				{
 					super.setupMocks();
-					DomainDao mockDAO = mock(DomainDao.class);
-					doThrow(new RuntimeException()).when(mockDAO).getDomainByName((String)any());
+					DomainRepository mockDAO = mock(DomainRepository.class);
+					doThrow(new RuntimeException()).when(mockDAO).findByDomainNameIgnoreCase((String)any());
 					
-					domainResource.setDomainDao(mockDAO);
+					domainResource.setDomainRepository(mockDAO);
 				}
 				catch (Throwable t)
 				{
@@ -174,7 +174,7 @@ public class DefaultDomainService_addDomainTest extends SpringBaseTest
 			{
 				super.tearDownMocks();
 				
-				domainResource.setDomainDao(domainDao);
+				domainResource.setDomainRepository(domainRepo);
 			}
 			
 			@Override
@@ -214,10 +214,10 @@ public class DefaultDomainService_addDomainTest extends SpringBaseTest
 				try
 				{
 					super.setupMocks();
-					DomainDao mockDAO = mock(DomainDao.class);
-					doThrow(new RuntimeException()).when(mockDAO).add((org.nhindirect.config.store.Domain)any());
+					DomainRepository mockDAO = mock(DomainRepository.class);
+					doThrow(new RuntimeException()).when(mockDAO).save((org.nhindirect.config.store.Domain)any());
 					
-					domainResource.setDomainDao(mockDAO);
+					domainResource.setDomainRepository(mockDAO);
 				}
 				catch (Throwable t)
 				{
@@ -230,7 +230,7 @@ public class DefaultDomainService_addDomainTest extends SpringBaseTest
 			{
 				super.tearDownMocks();
 				
-				domainResource.setDomainDao(domainDao);
+				domainResource.setDomainRepository(domainRepo);
 			}
 			
 			@Override

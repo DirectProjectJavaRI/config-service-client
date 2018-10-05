@@ -16,9 +16,7 @@ import org.nhindirect.common.rest.exceptions.ServiceException;
 import org.nhindirect.common.rest.exceptions.ServiceMethodException;
 
 import org.nhindirect.config.model.Address;
-
-import org.nhindirect.config.store.dao.AddressDao;
-
+import org.nhindirect.config.repository.AddressRepository;
 
 public class DefaultAddressService_getAddressTest extends SpringBaseTest
 {	
@@ -47,7 +45,7 @@ public class DefaultAddressService_getAddressTest extends SpringBaseTest
 				final org.nhindirect.config.store.Domain domain = new org.nhindirect.config.store.Domain();
 				domain.setDomainName(domainName);
 				domain.setStatus(org.nhindirect.config.store.EntityStatus.ENABLED);
-				domainDao.add(domain);
+				domainRepo.save(domain);
 				
 				if (addAddress != null)
 					addAddress.setDomainName(domainName);
@@ -188,10 +186,10 @@ public class DefaultAddressService_getAddressTest extends SpringBaseTest
 				{
 					super.setupMocks();
 
-					AddressDao mockDAO = mock(AddressDao.class);
-					doThrow(new RuntimeException()).when(mockDAO).get(eq("blowup@test.com"));
+					AddressRepository mockDAO = mock(AddressRepository.class);
+					doThrow(new RuntimeException()).when(mockDAO).findByEmailAddressIgnoreCase(eq("blowup@test.com"));
 					
-					addressResource.setAddressDao(mockDAO);
+					addressResource.setAddressRepository(mockDAO);
 				}
 				catch (Throwable t)
 				{
@@ -204,7 +202,7 @@ public class DefaultAddressService_getAddressTest extends SpringBaseTest
 			{
 				super.tearDownMocks();
 				
-				addressResource.setAddressDao(addressDao);
+				addressResource.setAddressRepository(addressRepo);
 			}
 			
 			

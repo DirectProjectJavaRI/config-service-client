@@ -3,7 +3,7 @@ package org.nhind.config.rest.impl;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -19,7 +19,7 @@ import org.nhindirect.common.rest.exceptions.ServiceException;
 import org.nhindirect.common.rest.exceptions.ServiceMethodException;
 
 import org.nhindirect.config.model.CertPolicyGroup;
-import org.nhindirect.config.store.dao.CertPolicyDao;
+import org.nhindirect.config.repository.CertPolicyGroupRepository;
 
 public class DefaultCertPolicyService_deletePolicyGroupTest extends SpringBaseTest
 {
@@ -103,7 +103,7 @@ public void testRemovePolicyGroupByName_assertGroupRemoved()  throws Exception
 		@Override
 		protected void doAssertions() throws Exception
 		{
-			assertNull(policyDao.getPolicyGroupByName(getPolicyGroupToDelete()));
+			assertNull(policyRepo.findByPolicyNameIgnoreCase(getPolicyGroupToDelete()));
 		}
 	}.perform();
 }
@@ -162,10 +162,10 @@ public void testRemovePolicyGroupByName_errorInLookup_assertServiceError()  thro
 			try
 			{
 				super.setupMocks();
-				CertPolicyDao mockDAO = mock(CertPolicyDao.class);
-				doThrow(new RuntimeException()).when(mockDAO).getPolicyGroupByName((String)any());
+				CertPolicyGroupRepository mockDAO = mock(CertPolicyGroupRepository.class);
+				doThrow(new RuntimeException()).when(mockDAO).findByPolicyGroupNameIgnoreCase((String)any());
 				
-				certPolResource.setCertPolicyDao(mockDAO);
+				certPolResource.setCertPolicyGroupRepository(mockDAO);
 			}
 			catch (Throwable t)
 			{
@@ -178,7 +178,7 @@ public void testRemovePolicyGroupByName_errorInLookup_assertServiceError()  thro
 		{
 			super.tearDownMocks();
 			
-			certPolResource.setCertPolicyDao(policyDao);
+			certPolResource.setCertPolicyGroupRepository(policyGroupRepo);
 		}	
 		
 		@Override
@@ -214,11 +214,11 @@ public void testRemovePolicyGroupByName_errorInDelete_assertServiceError()  thro
 			try
 			{
 				super.setupMocks();
-				CertPolicyDao mockDAO = mock(CertPolicyDao.class);
-				when(mockDAO.getPolicyGroupByName((String)any())).thenReturn(new org.nhindirect.config.store.CertPolicyGroup());
-				doThrow(new RuntimeException()).when(mockDAO).deletePolicyGroups((long[])any());
+				CertPolicyGroupRepository mockDAO = mock(CertPolicyGroupRepository.class);
+				when(mockDAO.findByPolicyGroupNameIgnoreCase((String)any())).thenReturn(new org.nhindirect.config.store.CertPolicyGroup());
+				doThrow(new RuntimeException()).when(mockDAO).deleteById((Long)any());
 				
-				certPolResource.setCertPolicyDao(mockDAO);
+				certPolResource.setCertPolicyGroupRepository(mockDAO);
 			}
 			catch (Throwable t)
 			{
@@ -231,7 +231,7 @@ public void testRemovePolicyGroupByName_errorInDelete_assertServiceError()  thro
 		{
 			super.tearDownMocks();
 			
-			certPolResource.setCertPolicyDao(policyDao);
+			certPolResource.setCertPolicyGroupRepository(policyGroupRepo);
 		}	
 		
 		@Override

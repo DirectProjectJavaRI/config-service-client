@@ -2,8 +2,7 @@ package org.nhind.config.rest.impl;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -21,8 +20,8 @@ import org.nhindirect.common.rest.exceptions.ServiceMethodException;
 
 
 import org.nhindirect.config.model.CertPolicyGroup;
+import org.nhindirect.config.repository.CertPolicyGroupRepository;
 
-import org.nhindirect.config.store.dao.CertPolicyDao;
 
 public class DefaultCertPolicyService_updatePolicyGroupTest extends SpringBaseTest
 {
@@ -168,10 +167,10 @@ public class DefaultCertPolicyService_updatePolicyGroupTest extends SpringBaseTe
 				try
 				{
 					super.setupMocks();
-					CertPolicyDao mockDAO = mock(CertPolicyDao.class);
-					doThrow(new RuntimeException()).when(mockDAO).getPolicyGroupByName((String)any());
+					CertPolicyGroupRepository mockDAO = mock(CertPolicyGroupRepository.class);
+					doThrow(new RuntimeException()).when(mockDAO).findByPolicyGroupNameIgnoreCase((String)any());
 					
-					certPolResource.setCertPolicyDao(mockDAO);
+					certPolResource.setCertPolicyGroupRepository(mockDAO);
 				}
 				catch (Throwable t)
 				{
@@ -184,7 +183,7 @@ public class DefaultCertPolicyService_updatePolicyGroupTest extends SpringBaseTe
 			{
 				super.tearDownMocks();
 				
-				certPolResource.setCertPolicyDao(policyDao);
+				certPolResource.setCertPolicyGroupRepository(policyGroupRepo);
 			}	
 			
 			protected Collection<CertPolicyGroup> getGroupsToAdd()
@@ -225,11 +224,12 @@ public class DefaultCertPolicyService_updatePolicyGroupTest extends SpringBaseTe
 				try
 				{
 					super.setupMocks();
-					CertPolicyDao mockDAO = mock(CertPolicyDao.class);
-					when(mockDAO.getPolicyGroupByName((String)any())).thenReturn(new org.nhindirect.config.store.CertPolicyGroup());
-					doThrow(new RuntimeException()).when(mockDAO).updateGroupAttributes(eq(0L), (String)any());
+
+					CertPolicyGroupRepository mockDAO = mock(CertPolicyGroupRepository.class);
+					when(mockDAO.findByPolicyGroupNameIgnoreCase((String)any())).thenReturn(new org.nhindirect.config.store.CertPolicyGroup());
+					doThrow(new RuntimeException()).when(mockDAO).save((org.nhindirect.config.store.CertPolicyGroup)any());
 					
-					certPolResource.setCertPolicyDao(mockDAO);
+					certPolResource.setCertPolicyGroupRepository(mockDAO);
 				}
 				catch (Throwable t)
 				{
@@ -242,7 +242,7 @@ public class DefaultCertPolicyService_updatePolicyGroupTest extends SpringBaseTe
 			{
 				super.tearDownMocks();
 				
-				certPolResource.setCertPolicyDao(policyDao);
+				certPolResource.setCertPolicyGroupRepository(policyGroupRepo);
 			}	
 			
 			protected Collection<CertPolicyGroup> getGroupsToAdd()

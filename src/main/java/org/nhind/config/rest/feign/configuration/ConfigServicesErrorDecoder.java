@@ -10,7 +10,7 @@ import org.nhindirect.common.rest.exceptions.ServiceMethodException;
 import feign.Response;
 import feign.codec.ErrorDecoder;
 
-public class DefaultErrorDecoder implements ErrorDecoder
+public class ConfigServicesErrorDecoder implements ErrorDecoder
 {
 
 	@SuppressWarnings("deprecation")

@@ -2,7 +2,7 @@ package org.nhind.config.rest.impl;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 
@@ -23,8 +23,8 @@ import org.nhindirect.common.rest.exceptions.ServiceMethodException;
 
 import org.nhindirect.config.model.Certificate;
 import org.nhindirect.config.model.utils.CertUtils;
+import org.nhindirect.config.repository.CertificateRepository;
 
-import org.nhindirect.config.store.dao.CertificateDao;
 
 
 public class DefaultCertificateService_deleteCertificatesByIdsTest extends SpringBaseTest
@@ -121,7 +121,7 @@ public class DefaultCertificateService_deleteCertificatesByIdsTest extends Sprin
 				@Override
 				protected Collection<Long> getIdsToRemove()
 				{
-					final Collection<org.nhindirect.config.store.Certificate> certs = certDao.list((String)null);
+					final Collection<org.nhindirect.config.store.Certificate> certs = certRepo.findAll();
 					
 					final Collection<Long> ids = new ArrayList<Long>();
 					for (org.nhindirect.config.store.Certificate cert : certs)
@@ -133,7 +133,7 @@ public class DefaultCertificateService_deleteCertificatesByIdsTest extends Sprin
 				@Override
 				protected void doAssertions() throws Exception
 				{
-					final Collection<org.nhindirect.config.store.Certificate> certs = certDao.list((String)null);
+					final Collection<org.nhindirect.config.store.Certificate> certs = certRepo.findAll();
 					assertTrue(certs.isEmpty());
 				}
 			}.perform();
@@ -172,7 +172,7 @@ public class DefaultCertificateService_deleteCertificatesByIdsTest extends Sprin
 				@Override
 				protected Collection<Long> getIdsToRemove()
 				{
-					final Collection<org.nhindirect.config.store.Certificate> certs = certDao.list((String)null);
+					final Collection<org.nhindirect.config.store.Certificate> certs =certRepo.findAll();
 					
 					final Collection<Long> ids = new ArrayList<Long>();
 
@@ -184,7 +184,7 @@ public class DefaultCertificateService_deleteCertificatesByIdsTest extends Sprin
 				@Override
 				protected void doAssertions() throws Exception
 				{
-					final Collection<org.nhindirect.config.store.Certificate> certs = certDao.list((String)null);
+					final Collection<org.nhindirect.config.store.Certificate> certs =certRepo.findAll();
 					assertEquals(0, certs.size());
 				}
 			}.perform();
@@ -225,7 +225,7 @@ public class DefaultCertificateService_deleteCertificatesByIdsTest extends Sprin
 				@Override
 				protected Collection<Long> getIdsToRemove()
 				{
-					final Collection<org.nhindirect.config.store.Certificate> certs = certDao.list((String)null);
+					final Collection<org.nhindirect.config.store.Certificate> certs = certRepo.findAll();
 					
 					final Collection<Long> ids = new ArrayList<Long>();
 
@@ -237,7 +237,7 @@ public class DefaultCertificateService_deleteCertificatesByIdsTest extends Sprin
 				@Override
 				protected void doAssertions() throws Exception
 				{
-					final Collection<org.nhindirect.config.store.Certificate> certs = certDao.list((String)null);
+					final Collection<org.nhindirect.config.store.Certificate> certs = certRepo.findAll();
 					assertEquals(1, certs.size());
 				}
 			}.perform();
@@ -255,10 +255,10 @@ public class DefaultCertificateService_deleteCertificatesByIdsTest extends Sprin
 					try
 					{
 						super.setupMocks();
-						CertificateDao mockDAO = mock(CertificateDao.class);
-						doThrow(new RuntimeException()).when(mockDAO).delete((List<Long>)any());
+						CertificateRepository mockDAO = mock(CertificateRepository.class);
+						doThrow(new RuntimeException()).when(mockDAO).deleteByIdIn((List<Long>)any());
 						
-						certResource.setCertificateDao(mockDAO);
+						certResource.setCertificateRepository(mockDAO);
 					}
 					catch (Throwable t)
 					{
@@ -271,7 +271,7 @@ public class DefaultCertificateService_deleteCertificatesByIdsTest extends Sprin
 				{
 					super.tearDownMocks();
 					
-					certResource.setCertificateDao(certDao);
+					certResource.setCertificateRepository(certRepo);
 				}			
 				
 				@Override

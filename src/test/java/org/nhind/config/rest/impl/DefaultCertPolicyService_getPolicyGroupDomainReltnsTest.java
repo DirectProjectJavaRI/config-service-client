@@ -21,7 +21,7 @@ import org.nhindirect.config.model.CertPolicyGroup;
 import org.nhindirect.config.model.CertPolicyGroupDomainReltn;
 import org.nhindirect.config.model.Domain;
 import org.nhindirect.config.model.EntityStatus;
-import org.nhindirect.config.store.dao.CertPolicyDao;
+import org.nhindirect.config.repository.CertPolicyGroupDomainReltnRepository;
 
 public class DefaultCertPolicyService_getPolicyGroupDomainReltnsTest extends SpringBaseTest
 {
@@ -233,10 +233,11 @@ public class DefaultCertPolicyService_getPolicyGroupDomainReltnsTest extends Spr
 				try
 				{
 					super.setupMocks();
-					CertPolicyDao mockDAO = mock(CertPolicyDao.class);
-					doThrow(new RuntimeException()).when(mockDAO).getPolicyGroupDomainReltns();
 					
-					certPolResource.setCertPolicyDao(mockDAO);
+					CertPolicyGroupDomainReltnRepository mockDAO = mock(CertPolicyGroupDomainReltnRepository.class);
+					doThrow(new RuntimeException()).when(mockDAO).findAll();
+					
+					certPolResource.setCertPolicyGroupDomainReltnRepository(mockDAO);
 				}
 				catch (Throwable t)
 				{
@@ -249,7 +250,7 @@ public class DefaultCertPolicyService_getPolicyGroupDomainReltnsTest extends Spr
 			{
 				super.tearDownMocks();
 				
-				certPolResource.setCertPolicyDao(policyDao);
+				certPolResource.setCertPolicyGroupDomainReltnRepository(groupReltnRepo);
 			}
 			
 			@Override

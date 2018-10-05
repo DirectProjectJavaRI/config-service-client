@@ -3,7 +3,7 @@ package org.nhind.config.rest.impl;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.eq;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 
@@ -19,7 +19,7 @@ import org.nhindirect.common.rest.exceptions.ServiceMethodException;
 import org.nhindirect.config.model.Address;
 import org.nhindirect.config.model.Domain;
 import org.nhindirect.config.model.EntityStatus;
-import org.nhindirect.config.store.dao.DomainDao;
+import org.nhindirect.config.repository.DomainRepository;
 
 public class DefaultDomainService_searchDomainsServiceTest extends SpringBaseTest
 {
@@ -424,10 +424,11 @@ public class DefaultDomainService_searchDomainsServiceTest extends SpringBaseTes
 					try
 					{
 						super.setupMocks();
-						DomainDao mockDAO = mock(DomainDao.class);
-						doThrow(new RuntimeException()).when(mockDAO).searchDomain(eq("test.com"), eq((org.nhindirect.config.store.EntityStatus)null));
+
+						DomainRepository mockDAO = mock(DomainRepository.class);
+						doThrow(new RuntimeException()).when(mockDAO).findByDomainNameContainingIgnoreCase(eq("test.com"));
 						
-						domainResource.setDomainDao(mockDAO);
+						domainResource.setDomainRepository(mockDAO);
 					}
 					catch (Throwable t)
 					{
@@ -440,7 +441,7 @@ public class DefaultDomainService_searchDomainsServiceTest extends SpringBaseTes
 				{
 					super.tearDownMocks();
 					
-					domainResource.setDomainDao(domainDao);
+					domainResource.setDomainRepository(domainRepo);
 				}
 				
 				@Override

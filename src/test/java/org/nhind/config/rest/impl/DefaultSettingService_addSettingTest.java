@@ -3,13 +3,12 @@ package org.nhind.config.rest.impl;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.eq;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 
@@ -21,8 +20,8 @@ import org.nhindirect.common.rest.exceptions.ServiceException;
 import org.nhindirect.common.rest.exceptions.ServiceMethodException;
 
 import org.nhindirect.config.model.Setting;
+import org.nhindirect.config.repository.SettingRepository;
 
-import org.nhindirect.config.store.dao.SettingDao;
 
 public class DefaultSettingService_addSettingTest extends SpringBaseTest
 {
@@ -100,7 +99,7 @@ public class DefaultSettingService_addSettingTest extends SpringBaseTest
 				@Override
 				protected void doAssertions() throws Exception
 				{
-					Collection<org.nhindirect.config.store.Setting> retrievedSettings = settingDao.getAll();
+					Collection<org.nhindirect.config.store.Setting> retrievedSettings = settingRepo.findAll();
 					
 					assertNotNull(retrievedSettings);
 					assertEquals(this.settings.size(), retrievedSettings.size());
@@ -170,10 +169,10 @@ public class DefaultSettingService_addSettingTest extends SpringBaseTest
 					try
 					{
 						super.setupMocks();
-						SettingDao mockDAO = mock(SettingDao.class);
-						doThrow(new RuntimeException()).when(mockDAO).getByNames(Arrays.asList("setting1"));
+						SettingRepository mockDAO = mock(SettingRepository.class);
+						doThrow(new RuntimeException()).when(mockDAO).findByNameIgnoreCase(eq("setting1"));
 						
-						settingResource.setSettingDao(mockDAO);
+						settingResource.setSettingRepository(mockDAO);
 					}
 					catch (Throwable t)
 					{
@@ -186,7 +185,7 @@ public class DefaultSettingService_addSettingTest extends SpringBaseTest
 				{
 					super.tearDownMocks();
 					
-					settingResource.setSettingDao(settingDao);
+					settingResource.setSettingRepository(settingRepo);
 				}	
 				
 				@Override
@@ -228,11 +227,11 @@ public class DefaultSettingService_addSettingTest extends SpringBaseTest
 					try
 					{
 						super.setupMocks();
-						SettingDao mockDAO = mock(SettingDao.class);
-						when(mockDAO.getByNames(Arrays.asList("setting1"))).thenReturn(new ArrayList<org.nhindirect.config.store.Setting>());
-						doThrow(new RuntimeException()).when(mockDAO).add(eq("setting1"), eq("value1"));
+						SettingRepository mockDAO = mock(SettingRepository.class);
+
+						doThrow(new RuntimeException()).when(mockDAO).save((org.nhindirect.config.store.Setting)any());
 						
-						settingResource.setSettingDao(mockDAO);
+						settingResource.setSettingRepository(mockDAO);
 					}
 					catch (Throwable t)
 					{
@@ -245,7 +244,7 @@ public class DefaultSettingService_addSettingTest extends SpringBaseTest
 				{
 					super.tearDownMocks();
 					
-					settingResource.setSettingDao(settingDao);
+					settingResource.setSettingRepository(settingRepo);
 				}	
 				
 				@Override

@@ -11,8 +11,8 @@
 	<parent>
 	   <groupId>org.springframework.boot</groupId>
 	   <artifactId>spring-boot-dependencies</artifactId>
-	   <version>2.0.5.RELEASE</version>
-	</parent>	
+	   <version>2.1.0.M4</version>
+	</parent>		
 	<scm>
 		<url>scm:git:https://github.com/DirectProject/nhin-d.git</url>
 		<connection>scm:git:https://github.com/DirectProject/nhin-d.git</connection>
@@ -39,8 +39,16 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<spring-cloud-dependencies.version>Finchley.SR1</spring-cloud-dependencies.version>
+		<spring-cloud-dependencies.version>Greenwich.M1</spring-cloud-dependencies.version>
 	</properties>
+  	<repositories>
+	    <!-- Temp repository for Spring Boot Milestone -->
+        <repository>
+            <id>spring-milestone</id>
+            <name>Spring Milestone Releases</name>
+            <url>https://repo.spring.io/milestone/</url>
+        </repository>
+     </repositories>  	
 	<dependencyManagement>
 		<dependencies>
 			<dependency>

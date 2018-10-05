@@ -4,14 +4,13 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.List;
 
 import org.junit.Test;
 import org.nhind.config.client.SpringBaseTest;
@@ -23,7 +22,7 @@ import org.nhindirect.common.rest.exceptions.ServiceMethodException;
 
 import org.nhindirect.config.model.Anchor;
 import org.nhindirect.config.model.EntityStatus;
-import org.nhindirect.config.store.dao.AnchorDao;
+import org.nhindirect.config.repository.AnchorRepository;
 
 public class DefaultAnchorService_getAnchorsForOwnerTest extends SpringBaseTest
 {
@@ -653,7 +652,6 @@ public class DefaultAnchorService_getAnchorsForOwnerTest extends SpringBaseTest
 	{
 		new TestPlan()
 		{
-			@SuppressWarnings("unchecked")
 			@Override
 			protected void setupMocks()
 			{
@@ -661,10 +659,10 @@ public class DefaultAnchorService_getAnchorsForOwnerTest extends SpringBaseTest
 				{
 					super.setupMocks();
 					
-					AnchorDao mockDAO = mock(AnchorDao.class);
-					doThrow(new RuntimeException()).when(mockDAO).list((List<String>)any());
+					AnchorRepository mockDAO = mock(AnchorRepository.class);
+					doThrow(new RuntimeException()).when(mockDAO).findByOwnerIgnoreCase((String)any());
 					
-					anchorResource.setAnchorDao(mockDAO);
+					anchorResource.setAnchorRepository(mockDAO);
 				}
 				catch (Throwable t)
 				{
@@ -677,7 +675,7 @@ public class DefaultAnchorService_getAnchorsForOwnerTest extends SpringBaseTest
 			{
 				super.tearDownMocks();
 				
-				anchorResource.setAnchorDao(anchorDao);
+				anchorResource.setAnchorRepository(anchorRepo);
 			}
 			
 			@Override

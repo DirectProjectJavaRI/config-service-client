@@ -3,8 +3,7 @@ package org.nhind.config.rest.impl;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -24,8 +23,8 @@ import org.nhindirect.config.model.CertPolicy;
 import org.nhindirect.config.model.CertPolicyGroup;
 import org.nhindirect.config.model.Domain;
 import org.nhindirect.config.model.EntityStatus;
-import org.nhindirect.config.store.dao.CertPolicyDao;
-import org.nhindirect.config.store.dao.DomainDao;
+import org.nhindirect.config.repository.CertPolicyGroupDomainReltnRepository;
+import org.nhindirect.config.repository.DomainRepository;
 
 public class DefaultCertPolicyService_getPolicyGroupsByDomainTest extends SpringBaseTest
 {
@@ -279,13 +278,11 @@ public class DefaultCertPolicyService_getPolicyGroupsByDomainTest extends Spring
 				try
 				{
 					super.setupMocks();
-					CertPolicyDao mockPolicyDAO = mock(CertPolicyDao.class);
-					DomainDao mockDomainDAO = mock(DomainDao.class);
+					DomainRepository mockDomainDAO = mock(DomainRepository.class);
 					
-					doThrow(new RuntimeException()).when(mockDomainDAO).getDomainByName((String)any());
+					doThrow(new RuntimeException()).when(mockDomainDAO).findByDomainNameIgnoreCase((String)any());
 					
-					certPolResource.setCertPolicyDao(mockPolicyDAO);
-					certPolResource.setDomainDao(mockDomainDAO);
+					certPolResource.setDomainRepository(mockDomainDAO);
 				}
 				catch (Throwable t)
 				{
@@ -298,8 +295,7 @@ public class DefaultCertPolicyService_getPolicyGroupsByDomainTest extends Spring
 			{
 				super.tearDownMocks();
 				
-				certPolResource.setCertPolicyDao(policyDao);
-				certPolResource.setDomainDao(domainDao);
+				certPolResource.setDomainRepository(domainRepo);
 			}
 			
 			@Override
@@ -354,14 +350,14 @@ public class DefaultCertPolicyService_getPolicyGroupsByDomainTest extends Spring
 				try
 				{
 					super.setupMocks();
-					CertPolicyDao mockPolicyDAO = mock(CertPolicyDao.class);
-					DomainDao mockDomainDAO = mock(DomainDao.class);
+					CertPolicyGroupDomainReltnRepository mockPolicyDAO = mock(CertPolicyGroupDomainReltnRepository.class);
+					DomainRepository mockDomainDAO = mock(DomainRepository.class);
 					
-					when(mockDomainDAO.getDomainByName((String)any())).thenReturn(new org.nhindirect.config.store.Domain());
-					doThrow(new RuntimeException()).when(mockPolicyDAO).getPolicyGroupsByDomain(eq(0L));
+					when(mockDomainDAO.findByDomainNameIgnoreCase((String)any())).thenReturn(new org.nhindirect.config.store.Domain());
+					doThrow(new RuntimeException()).when(mockPolicyDAO).findByDomain((org.nhindirect.config.store.Domain)any());
 					
-					certPolResource.setCertPolicyDao(mockPolicyDAO);
-					certPolResource.setDomainDao(mockDomainDAO);
+					certPolResource.setCertPolicyGroupDomainReltnRepository(mockPolicyDAO);
+					certPolResource.setDomainRepository(mockDomainDAO);
 				}
 				catch (Throwable t)
 				{
@@ -374,8 +370,8 @@ public class DefaultCertPolicyService_getPolicyGroupsByDomainTest extends Spring
 			{
 				super.tearDownMocks();
 				
-				certPolResource.setCertPolicyDao(policyDao);
-				certPolResource.setDomainDao(domainDao);
+				certPolResource.setCertPolicyGroupDomainReltnRepository(groupReltnRepo);
+				certPolResource.setDomainRepository(domainRepo);
 			}
 			
 			@Override

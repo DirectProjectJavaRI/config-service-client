@@ -2,14 +2,15 @@ package org.nhind.config.rest.impl;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Optional;
 
 import org.junit.Test;
 import org.nhind.config.client.SpringBaseTest;
@@ -19,9 +20,8 @@ import org.nhindirect.common.rest.exceptions.ServiceException;
 import org.nhindirect.common.rest.exceptions.ServiceMethodException;
 import org.nhindirect.config.model.DNSRecord;
 import org.nhindirect.config.model.utils.DNSUtils;
-
+import org.nhindirect.config.repository.DNSRepository;
 import org.nhindirect.config.resources.util.EntityModelConversion;
-import org.nhindirect.config.store.dao.DNSDao;
 
 public class DefaultDNSService_updateDNSRecordTest extends SpringBaseTest
 {
@@ -102,7 +102,7 @@ public class DefaultDNSService_updateDNSRecordTest extends SpringBaseTest
 				@Override
 				protected DNSRecord getRecordToUpdate()
 				{				
-					Collection<org.nhindirect.config.store.DNSRecord> records = dnsDao.get(addedRecord.getName(), addedRecord.getType());
+					Collection<org.nhindirect.config.store.DNSRecord> records = dnsRepo.findByNameIgnoreCaseAndType(addedRecord.getName(), addedRecord.getType());
 					
 					// should be one record
 					assertEquals(1, records.size());
@@ -138,7 +138,7 @@ public class DefaultDNSService_updateDNSRecordTest extends SpringBaseTest
 				@Override
 				protected DNSRecord getRecordToUpdate()
 				{				
-					Collection<org.nhindirect.config.store.DNSRecord> records = dnsDao.get(addedRecord.getName(), addedRecord.getType());
+					Collection<org.nhindirect.config.store.DNSRecord> records = dnsRepo.findByNameIgnoreCaseAndType(addedRecord.getName(), addedRecord.getType());
 					
 					// should be one record
 					assertEquals(1, records.size());
@@ -202,11 +202,11 @@ public class DefaultDNSService_updateDNSRecordTest extends SpringBaseTest
 					try
 					{
 						super.setupMocks();
-						DNSDao mockDAO = mock(DNSDao.class);
+						DNSRepository mockDAO = mock(DNSRepository.class);
 						
-						doThrow(new RuntimeException()).when(mockDAO).get(eq(1233L));
+						doThrow(new RuntimeException()).when(mockDAO).findById(eq(1233L));
 						
-						dnsResource.setDNSDao(mockDAO);
+						dnsResource.setDNSRepository(mockDAO);
 					}
 					catch (Throwable t)
 					{
@@ -219,7 +219,7 @@ public class DefaultDNSService_updateDNSRecordTest extends SpringBaseTest
 				{
 					super.tearDownMocks();
 					
-					dnsResource.setDNSDao(dnsDao);
+					dnsResource.setDNSRepository(dnsRepo);
 				}				
 				
 				@Override
@@ -260,12 +260,12 @@ public class DefaultDNSService_updateDNSRecordTest extends SpringBaseTest
 					{
 						super.setupMocks();
 						
-						DNSDao mockDAO = mock(DNSDao.class);
+						DNSRepository mockDAO = mock(DNSRepository.class);
+						final Optional<org.nhindirect.config.store.DNSRecord> op = Optional.of(new org.nhindirect.config.store.DNSRecord());
+						when(mockDAO.findById(1233L)).thenReturn(op);
+						doThrow(new RuntimeException()).when(mockDAO).save((org.nhindirect.config.store.DNSRecord)any());
 						
-						when(mockDAO.get(1233L)).thenReturn(new org.nhindirect.config.store.DNSRecord());
-						doThrow(new RuntimeException()).when(mockDAO).update(eq(1233L), (org.nhindirect.config.store.DNSRecord)any());
-						
-						dnsResource.setDNSDao(mockDAO);
+						dnsResource.setDNSRepository(mockDAO);
 					}
 					catch (Throwable t)
 					{
@@ -278,7 +278,7 @@ public class DefaultDNSService_updateDNSRecordTest extends SpringBaseTest
 				{
 					super.tearDownMocks();
 					
-					dnsResource.setDNSDao(dnsDao);
+					dnsResource.setDNSRepository(dnsRepo);
 				}				
 				
 				@Override

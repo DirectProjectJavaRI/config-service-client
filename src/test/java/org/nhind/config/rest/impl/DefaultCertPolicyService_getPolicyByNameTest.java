@@ -20,8 +20,7 @@ import org.nhindirect.common.rest.exceptions.ServiceException;
 import org.nhindirect.common.rest.exceptions.ServiceMethodException;
 
 import org.nhindirect.config.model.CertPolicy;
-
-import org.nhindirect.config.store.dao.CertPolicyDao;
+import org.nhindirect.config.repository.CertPolicyRepository;
 import org.nhindirect.policy.PolicyLexicon;
 
 
@@ -197,10 +196,10 @@ public class DefaultCertPolicyService_getPolicyByNameTest extends SpringBaseTest
 				try
 				{
 					super.setupMocks();
-					CertPolicyDao mockDAO = mock(CertPolicyDao.class);
-					doThrow(new RuntimeException()).when(mockDAO).getPolicyByName((String)any());
+					CertPolicyRepository mockDAO = mock(CertPolicyRepository.class);
+					doThrow(new RuntimeException()).when(mockDAO).findByPolicyNameIgnoreCase((String)any());
 					
-					certPolResource.setCertPolicyDao(mockDAO);
+					certPolResource.setCertPolicyRepository(mockDAO);
 				}
 				catch (Throwable t)
 				{
@@ -213,7 +212,7 @@ public class DefaultCertPolicyService_getPolicyByNameTest extends SpringBaseTest
 			{
 				super.tearDownMocks();
 				
-				certPolResource.setCertPolicyDao(policyDao);
+				certPolResource.setCertPolicyRepository(policyRepo);
 			}	
 			
 			@Override

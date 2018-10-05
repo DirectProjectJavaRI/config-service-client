@@ -3,7 +3,7 @@ package org.nhind.config.rest.impl;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 
@@ -21,8 +21,7 @@ import org.nhindirect.common.rest.exceptions.ServiceException;
 import org.nhindirect.common.rest.exceptions.ServiceMethodException;
 import org.nhindirect.config.model.DNSRecord;
 import org.nhindirect.config.model.utils.DNSUtils;
-
-import org.nhindirect.config.store.dao.DNSDao;
+import org.nhindirect.config.repository.DNSRepository;
 import org.xbill.DNS.Type;
 
 public class DefaultDNSService_getDNSRecordTest extends SpringBaseTest
@@ -401,10 +400,10 @@ public class DefaultDNSService_getDNSRecordTest extends SpringBaseTest
 				try
 				{
 					super.setupMocks();
-					DNSDao mockDAO = mock(DNSDao.class);
-					doThrow(new RuntimeException()).when(mockDAO).get((String)any());
+					DNSRepository mockDAO = mock(DNSRepository.class);
+					doThrow(new RuntimeException()).when(mockDAO).findByNameIgnoreCase((String)any());
 					
-					dnsResource.setDNSDao(mockDAO);
+					dnsResource.setDNSRepository(mockDAO);
 				}
 				catch (Throwable t)
 				{
@@ -417,7 +416,7 @@ public class DefaultDNSService_getDNSRecordTest extends SpringBaseTest
 			{
 				super.tearDownMocks();
 				
-				dnsResource.setDNSDao(dnsDao);
+				dnsResource.setDNSRepository(dnsRepo);
 			}
 			
 			

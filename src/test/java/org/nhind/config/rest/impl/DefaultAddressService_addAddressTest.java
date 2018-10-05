@@ -3,7 +3,7 @@ package org.nhind.config.rest.impl;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 
@@ -14,9 +14,8 @@ import org.nhindirect.common.rest.exceptions.ServiceException;
 import org.nhindirect.common.rest.exceptions.ServiceMethodException;
 
 import org.nhindirect.config.model.Address;
-
-import org.nhindirect.config.store.dao.AddressDao;
-import org.nhindirect.config.store.dao.DomainDao;
+import org.nhindirect.config.repository.AddressRepository;
+import org.nhindirect.config.repository.DomainRepository;
 
 public class DefaultAddressService_addAddressTest extends SpringBaseTest
 {
@@ -46,7 +45,7 @@ public class DefaultAddressService_addAddressTest extends SpringBaseTest
 				final org.nhindirect.config.store.Domain domain = new org.nhindirect.config.store.Domain();
 				domain.setDomainName(domainName);
 				domain.setStatus(org.nhindirect.config.store.EntityStatus.ENABLED);
-				domainDao.add(domain);
+				domainRepo.save(domain);
 				
 				addAddress.setDomainName(domainName);
 			}
@@ -244,7 +243,7 @@ public class DefaultAddressService_addAddressTest extends SpringBaseTest
 				org.nhindirect.config.store.Domain domain = new org.nhindirect.config.store.Domain();
 				domain.setDomainName("test.com");
 				domain.setStatus(org.nhindirect.config.store.EntityStatus.ENABLED);
-				domainDao.add(domain);
+				domain = domainRepo.save(domain);
 				
 				org.nhindirect.config.store.Address address = new org.nhindirect.config.store.Address();
 				
@@ -255,7 +254,7 @@ public class DefaultAddressService_addAddressTest extends SpringBaseTest
 				address.setStatus(org.nhindirect.config.store.EntityStatus.ENABLED);
 				address.setDomain(domain);
 				
-				addressDao.add(address);
+				addressRepo.save(address);
 			}
 			
 			@Override
@@ -302,10 +301,10 @@ public class DefaultAddressService_addAddressTest extends SpringBaseTest
 				{
 					super.setupMocks();
 
-					DomainDao mockDAO = mock(DomainDao.class);
-					doThrow(new RuntimeException()).when(mockDAO).getDomainByName((String)any());
+					DomainRepository mockDAO = mock(DomainRepository.class);
+					doThrow(new RuntimeException()).when(mockDAO).findByDomainNameIgnoreCase((String)any());
 					
-					addressResource.setDomainDao(mockDAO);
+					addressResource.setDomainRepository(mockDAO);
 				}
 				catch (Throwable t)
 				{
@@ -318,7 +317,7 @@ public class DefaultAddressService_addAddressTest extends SpringBaseTest
 			{
 				super.tearDownMocks();
 				
-				addressResource.setDomainDao(domainDao);
+				addressResource.setDomainRepository(domainRepo);
 			}
 			
 			@Override
@@ -364,10 +363,10 @@ public class DefaultAddressService_addAddressTest extends SpringBaseTest
 				{
 					super.setupMocks();
 					
-					AddressDao mockDAO = mock(AddressDao.class);
-					doThrow(new RuntimeException()).when(mockDAO).get((String)any());
+					AddressRepository mockDAO = mock(AddressRepository.class);
+					doThrow(new RuntimeException()).when(mockDAO).findByEmailAddressIgnoreCase((String)any());
 					
-					addressResource.setAddressDao(mockDAO);
+					addressResource.setAddressRepository(mockDAO);
 				}
 				catch (Throwable t)
 				{
@@ -380,7 +379,7 @@ public class DefaultAddressService_addAddressTest extends SpringBaseTest
 			{
 				super.tearDownMocks();
 				
-				addressResource.setAddressDao(addressDao);
+				addressResource.setAddressRepository(addressRepo);
 			}
 			
 			@Override
@@ -426,10 +425,10 @@ public class DefaultAddressService_addAddressTest extends SpringBaseTest
 				{
 					super.setupMocks();
 
-					AddressDao mockDAO = mock(AddressDao.class);
-					doThrow(new RuntimeException()).when(mockDAO).add((org.nhindirect.config.store.Address)any());
+					AddressRepository mockDAO = mock(AddressRepository.class);
+					doThrow(new RuntimeException()).when(mockDAO).save((org.nhindirect.config.store.Address)any());
 					
-					addressResource.setAddressDao(mockDAO);
+					addressResource.setAddressRepository(mockDAO);
 				}
 				catch (Throwable t)
 				{
@@ -442,7 +441,7 @@ public class DefaultAddressService_addAddressTest extends SpringBaseTest
 			{
 				super.tearDownMocks();
 				
-				addressResource.setAddressDao(addressDao);
+				addressResource.setAddressRepository(addressRepo);
 			}
 			
 			@Override

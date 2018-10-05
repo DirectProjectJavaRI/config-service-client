@@ -2,13 +2,14 @@ package org.nhind.config.rest.impl;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 
 import org.junit.Test;
 import org.nhind.config.client.SpringBaseTest;
@@ -20,9 +21,7 @@ import org.nhindirect.common.rest.exceptions.ServiceMethodException;
 
 import org.nhindirect.config.model.DNSRecord;
 import org.nhindirect.config.model.utils.DNSUtils;
-
-import org.nhindirect.config.store.dao.DNSDao;
-import org.xbill.DNS.Type;
+import org.nhindirect.config.repository.DNSRepository;
 
 public class DefaultDNSService_deleteDNSRecordsByIdsTest extends SpringBaseTest
 {
@@ -123,7 +122,7 @@ public class DefaultDNSService_deleteDNSRecordsByIdsTest extends SpringBaseTest
 			@Override
 			protected Collection<Long> getIdsToRemove()
 			{
-				final Collection<org.nhindirect.config.store.DNSRecord> recs = dnsDao.get(Type.ANY);
+				final Collection<org.nhindirect.config.store.DNSRecord> recs = dnsRepo.findAll();
 				
 				final Collection<Long> ids = new ArrayList<Long>();
 				for (org.nhindirect.config.store.DNSRecord rec : recs)
@@ -135,7 +134,7 @@ public class DefaultDNSService_deleteDNSRecordsByIdsTest extends SpringBaseTest
 			@Override
 			protected void doAssertions() throws Exception
 			{
-				final Collection<org.nhindirect.config.store.DNSRecord> recs = dnsDao.get(Type.ANY);
+				final Collection<org.nhindirect.config.store.DNSRecord> recs = dnsRepo.findAll();
 				assertTrue(recs.isEmpty());
 			}
 		}.perform();
@@ -146,16 +145,17 @@ public class DefaultDNSService_deleteDNSRecordsByIdsTest extends SpringBaseTest
 	{
 		new TestPlan()
 		{
+			@SuppressWarnings("unchecked")
 			@Override
 			protected void setupMocks()
 			{
 				try
 				{
 					super.setupMocks();
-					DNSDao mockDAO = mock(DNSDao.class);
-					doThrow(new RuntimeException()).when(mockDAO).remove((long[])any());
+					DNSRepository mockDAO = mock(DNSRepository.class);
+					doThrow(new RuntimeException()).when(mockDAO).deleteByIdIn((List<Long>)any());
 					
-					dnsResource.setDNSDao(mockDAO);
+					dnsResource.setDNSRepository(mockDAO);
 				}
 				catch (Throwable t)
 				{
@@ -168,7 +168,7 @@ public class DefaultDNSService_deleteDNSRecordsByIdsTest extends SpringBaseTest
 			{
 				super.tearDownMocks();
 				
-				dnsResource.setDNSDao(dnsDao);
+				dnsResource.setDNSRepository(dnsRepo);
 			}
 			
 			@Override

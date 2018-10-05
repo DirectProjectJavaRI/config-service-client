@@ -4,7 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 
@@ -27,8 +27,8 @@ import org.nhindirect.config.model.Certificate;
 import org.nhindirect.config.model.EntityStatus;
 import org.nhindirect.config.model.utils.CertUtils;
 import org.nhindirect.config.model.utils.CertUtils.CertContainer;
+import org.nhindirect.config.repository.CertificateRepository;
 
-import org.nhindirect.config.store.dao.CertificateDao;
 
 public class DefaultCertificateService_getCertificatesByOwnerAndThumbprintTest extends SpringBaseTest
 {
@@ -283,10 +283,10 @@ public class DefaultCertificateService_getCertificatesByOwnerAndThumbprintTest e
 					try
 					{
 						super.setupMocks();
-						CertificateDao mockDAO = mock(CertificateDao.class);
-						doThrow(new RuntimeException()).when(mockDAO).load((String)any(), (String)any());
+						CertificateRepository mockDAO = mock(CertificateRepository.class);
+						doThrow(new RuntimeException()).when(mockDAO).findByOwnerIgnoreCaseAndThumbprint((String)any(), (String)any());
 						
-						certResource.setCertificateDao(mockDAO);
+						certResource.setCertificateRepository(mockDAO);
 					}
 					catch (Throwable t)
 					{
@@ -299,7 +299,7 @@ public class DefaultCertificateService_getCertificatesByOwnerAndThumbprintTest e
 				{
 					super.tearDownMocks();
 					
-					certResource.setCertificateDao(certDao);
+					certResource.setCertificateRepository(certRepo);
 				}
 				
 				@Override

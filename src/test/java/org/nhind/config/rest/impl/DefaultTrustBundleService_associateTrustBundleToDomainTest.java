@@ -3,7 +3,8 @@ package org.nhind.config.rest.impl;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.eq;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -23,9 +24,9 @@ import org.nhindirect.config.model.Address;
 import org.nhindirect.config.model.Domain;
 import org.nhindirect.config.model.EntityStatus;
 import org.nhindirect.config.model.TrustBundle;
-
-import org.nhindirect.config.store.dao.DomainDao;
-import org.nhindirect.config.store.dao.TrustBundleDao;
+import org.nhindirect.config.repository.DomainRepository;
+import org.nhindirect.config.repository.TrustBundleDomainReltnRepository;
+import org.nhindirect.config.repository.TrustBundleRepository;
 
 public class DefaultTrustBundleService_associateTrustBundleToDomainTest extends SpringBaseTest
 {
@@ -169,7 +170,7 @@ public class DefaultTrustBundleService_associateTrustBundleToDomainTest extends 
 				{
 					
 					final Collection<org.nhindirect.config.store.TrustBundleDomainReltn> bundleRelts =  
-							bundleDao.getTrustBundlesByDomain(domainDao.getDomainByName(getDomainNameToAssociate()).getId());
+							bundleDomainRepo.findByDomain(domainRepo.findByDomainNameIgnoreCase(getDomainNameToAssociate()));
 					
 					assertEquals(1, bundleRelts.size());
 					
@@ -254,7 +255,7 @@ public class DefaultTrustBundleService_associateTrustBundleToDomainTest extends 
 				{
 					
 					final Collection<org.nhindirect.config.store.TrustBundleDomainReltn> bundleRelts =  
-							bundleDao.getTrustBundlesByDomain(domainDao.getDomainByName(getDomainNameToAssociate()).getId());
+							bundleDomainRepo.findByDomain(domainRepo.findByDomainNameIgnoreCase(getDomainNameToAssociate()));
 					
 					assertEquals(1, bundleRelts.size());
 					
@@ -416,10 +417,11 @@ public class DefaultTrustBundleService_associateTrustBundleToDomainTest extends 
 					try
 					{
 						super.setupMocks();
-						TrustBundleDao mockDAO = mock(TrustBundleDao.class);
-						doThrow(new RuntimeException()).when(mockDAO).getTrustBundleByName(eq("testBundle1"));
 						
-						bundleResource.setTrustBundleDao(mockDAO);
+						TrustBundleRepository mockDAO = mock(TrustBundleRepository.class);
+						doThrow(new RuntimeException()).when(mockDAO).findByBundleNameIgnoreCase(eq("testBundle1"));
+						
+						bundleResource.setTrustBundleRepository(mockDAO);
 					}
 					catch (Throwable t)
 					{
@@ -432,7 +434,7 @@ public class DefaultTrustBundleService_associateTrustBundleToDomainTest extends 
 				{
 					super.tearDownMocks();
 					
-					bundleResource.setTrustBundleDao(bundleDao);
+					bundleResource.setTrustBundleRepository(bundleRepo);
 				}				
 				
 				
@@ -484,13 +486,13 @@ public class DefaultTrustBundleService_associateTrustBundleToDomainTest extends 
 					{
 						super.setupMocks();
 						
-						TrustBundleDao mockBundleDAO = mock(TrustBundleDao.class);
-						DomainDao mockDomainDAO = mock(DomainDao.class);
-						when(mockBundleDAO.getTrustBundleByName("testBundle1")).thenReturn(new org.nhindirect.config.store.TrustBundle());
-						doThrow(new RuntimeException()).when(mockDomainDAO).getDomainByName(eq("test.com"));
+						TrustBundleRepository mockDAO = mock(TrustBundleRepository.class);
+						DomainRepository mockDomainDAO = mock(DomainRepository.class);
+						when(mockDAO.findByBundleNameIgnoreCase(eq("testBundle1"))).thenReturn(new org.nhindirect.config.store.TrustBundle());
+						doThrow(new RuntimeException()).when(mockDomainDAO).findByDomainNameIgnoreCase(eq("test.com"));
 						
-						bundleResource.setTrustBundleDao(mockBundleDAO);
-						bundleResource.setDomainDao(mockDomainDAO);
+						bundleResource.setTrustBundleRepository(mockDAO);
+						bundleResource.setDomainRepository(mockDomainDAO);
 					}
 					catch (Throwable t)
 					{
@@ -503,8 +505,8 @@ public class DefaultTrustBundleService_associateTrustBundleToDomainTest extends 
 				{
 					super.tearDownMocks();
 					
-					bundleResource.setTrustBundleDao(bundleDao);
-					bundleResource.setDomainDao(domainDao);
+					bundleResource.setTrustBundleRepository(bundleRepo);
+					bundleResource.setDomainRepository(domainRepo);
 				}				
 				
 				
@@ -554,14 +556,16 @@ public class DefaultTrustBundleService_associateTrustBundleToDomainTest extends 
 					{
 						super.setupMocks();
 						
-						TrustBundleDao mockBundleDAO = mock(TrustBundleDao.class);
-						DomainDao mockDomainDAO = mock(DomainDao.class);
-						when(mockBundleDAO.getTrustBundleByName("testBundle1")).thenReturn(new org.nhindirect.config.store.TrustBundle());
-						when(mockDomainDAO.getDomainByName("test.com")).thenReturn(new org.nhindirect.config.store.Domain());
-						doThrow(new RuntimeException()).when(mockBundleDAO).associateTrustBundleToDomain(eq(0L), eq(0L), eq(true), eq(true));
+						TrustBundleRepository mockDAO = mock(TrustBundleRepository.class);
+						DomainRepository mockDomainDAO = mock(DomainRepository.class);
+						TrustBundleDomainReltnRepository mockReltnRepo = mock(TrustBundleDomainReltnRepository.class);
+						when(mockDAO.findByBundleNameIgnoreCase("testBundle1")).thenReturn(new org.nhindirect.config.store.TrustBundle());
+						when(mockDomainDAO.findByDomainNameIgnoreCase("test.com")).thenReturn(new org.nhindirect.config.store.Domain());
+						doThrow(new RuntimeException()).when(mockReltnRepo).save((org.nhindirect.config.store.TrustBundleDomainReltn)any());
 						
-						bundleResource.setTrustBundleDao(mockBundleDAO);
-						bundleResource.setDomainDao(mockDomainDAO);
+						bundleResource.setTrustBundleRepository(mockDAO);
+						bundleResource.setDomainRepository(mockDomainDAO);
+						bundleResource.setTrustBundleDomainReltnRepository(mockReltnRepo);
 					}
 					catch (Throwable t)
 					{
@@ -574,8 +578,9 @@ public class DefaultTrustBundleService_associateTrustBundleToDomainTest extends 
 				{
 					super.tearDownMocks();
 					
-					bundleResource.setTrustBundleDao(bundleDao);
-					bundleResource.setDomainDao(domainDao);
+					bundleResource.setTrustBundleRepository(bundleRepo);
+					bundleResource.setDomainRepository(domainRepo);
+					bundleResource.setTrustBundleDomainReltnRepository(bundleDomainRepo);
 				}				
 				
 				

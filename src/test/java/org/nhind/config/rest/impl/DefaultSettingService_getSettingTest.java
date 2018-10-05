@@ -4,12 +4,13 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 
 import org.junit.Test;
 import org.nhind.config.client.SpringBaseTest;
@@ -19,8 +20,7 @@ import org.nhindirect.common.rest.exceptions.ServiceException;
 import org.nhindirect.common.rest.exceptions.ServiceMethodException;
 
 import org.nhindirect.config.model.Setting;
-
-import org.nhindirect.config.store.dao.SettingDao;
+import org.nhindirect.config.repository.SettingRepository;
 
 public class DefaultSettingService_getSettingTest extends SpringBaseTest
 {
@@ -174,16 +174,17 @@ public class DefaultSettingService_getSettingTest extends SpringBaseTest
 	{
 		new TestPlan()
 		{
+			@SuppressWarnings("unchecked")
 			@Override
 			protected void setupMocks()
 			{
 				try
 				{
 					super.setupMocks();
-					SettingDao mockDAO = mock(SettingDao.class);
-					doThrow(new RuntimeException()).when(mockDAO).getByNames(Arrays.asList("settin51"));
+					SettingRepository mockDAO = mock(SettingRepository.class);
+					doThrow(new RuntimeException()).when(mockDAO).findByNameIgnoreCaseIn((List<String>)any());
 					
-					settingResource.setSettingDao(mockDAO);
+					settingResource.setSettingRepository(mockDAO);
 				}
 				catch (Throwable t)
 				{
@@ -196,7 +197,7 @@ public class DefaultSettingService_getSettingTest extends SpringBaseTest
 			{
 				super.tearDownMocks();
 				
-				settingResource.setSettingDao(settingDao);
+				settingResource.setSettingRepository(settingRepo);
 			}				
 			
 			@Override

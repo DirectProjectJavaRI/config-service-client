@@ -8,9 +8,11 @@ import feign.codec.ErrorDecoder;
 @Configuration
 public class DefaultFeignClientConfiguration
 {
+	
 	@Bean
-	public ErrorDecoder feignClientErrorDecoder()
+	public ErrorDecoder configServiceFeignClientErrorDecoder()
 	{
-		return new DefaultErrorDecoder();
+		return new ConfigServicesErrorDecoder();
 	}
+	
 }

@@ -4,8 +4,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 
@@ -21,8 +21,7 @@ import org.nhind.config.testbase.BaseTestPlan;
 import org.nhindirect.common.rest.exceptions.ServiceException;
 import org.nhindirect.common.rest.exceptions.ServiceMethodException;
 import org.nhindirect.config.model.TrustBundle;
-import org.nhindirect.config.store.dao.TrustBundleDao;
-
+import org.nhindirect.config.repository.TrustBundleRepository;
 
 public class DefaultTrustBundleService_addTrustBundleTest extends SpringBaseTest
 {
@@ -110,7 +109,7 @@ public class DefaultTrustBundleService_addTrustBundleTest extends SpringBaseTest
 			
 			protected void doAssertions() throws Exception
 			{
-				final Collection<org.nhindirect.config.store.TrustBundle> bundles = bundleDao.getTrustBundles();
+				final Collection<org.nhindirect.config.store.TrustBundle> bundles = bundleRepo.findAll();
 				
 				assertNotNull(bundles);
 				assertEquals(2, bundles.size());
@@ -125,7 +124,6 @@ public class DefaultTrustBundleService_addTrustBundleTest extends SpringBaseTest
 					assertEquals(addedBundle.getBundleURL(), retrievedBundle.getBundleURL());
 					assertEquals(addedBundle.getRefreshInterval(), retrievedBundle.getRefreshInterval());
 					assertNull(retrievedBundle.getSigningCertificateData());
-					assertTrue(retrievedBundle.getTrustBundleAnchors().size() > 0);
 				}
 
 				
@@ -197,10 +195,11 @@ public class DefaultTrustBundleService_addTrustBundleTest extends SpringBaseTest
 				try
 				{
 					super.setupMocks();
-					TrustBundleDao mockDAO = mock(TrustBundleDao.class);
-					doThrow(new RuntimeException()).when(mockDAO).getTrustBundleByName(eq("testBundle1"));
 					
-					bundleResource.setTrustBundleDao(mockDAO);
+					TrustBundleRepository mockDAO = mock(TrustBundleRepository.class);
+					doThrow(new RuntimeException()).when(mockDAO).findByBundleNameIgnoreCase(eq("testBundle1"));
+					
+					bundleResource.setTrustBundleRepository(mockDAO);
 				}
 				catch (Throwable t)
 				{
@@ -213,7 +212,7 @@ public class DefaultTrustBundleService_addTrustBundleTest extends SpringBaseTest
 			{
 				super.tearDownMocks();
 				
-				bundleResource.setTrustBundleDao(bundleDao);
+				bundleResource.setTrustBundleRepository(bundleRepo);
 			}	
 			
 			@Override
@@ -264,10 +263,10 @@ public class DefaultTrustBundleService_addTrustBundleTest extends SpringBaseTest
 				{
 					super.setupMocks();
 					
-					TrustBundleDao mockDAO = mock(TrustBundleDao.class);
+					TrustBundleRepository mockDAO = mock(TrustBundleRepository.class);
 					
-					doThrow(new RuntimeException()).when(mockDAO).addTrustBundle((org.nhindirect.config.store.TrustBundle)any());
-					bundleResource.setTrustBundleDao(mockDAO);
+					doThrow(new RuntimeException()).when(mockDAO).save((org.nhindirect.config.store.TrustBundle)any());
+					bundleResource.setTrustBundleRepository(mockDAO);
 				}
 				catch (Throwable t)
 				{
@@ -280,7 +279,7 @@ public class DefaultTrustBundleService_addTrustBundleTest extends SpringBaseTest
 			{
 				super.tearDownMocks();
 				
-				bundleResource.setTrustBundleDao(bundleDao);
+				bundleResource.setTrustBundleRepository(bundleRepo);
 			}	
 			
 			@Override

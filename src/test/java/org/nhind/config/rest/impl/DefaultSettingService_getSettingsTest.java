@@ -18,8 +18,8 @@ import org.nhindirect.common.rest.exceptions.ServiceException;
 import org.nhindirect.common.rest.exceptions.ServiceMethodException;
 
 import org.nhindirect.config.model.Setting;
+import org.nhindirect.config.repository.SettingRepository;
 
-import org.nhindirect.config.store.dao.SettingDao;
 
 
 public class DefaultSettingService_getSettingsTest extends SpringBaseTest
@@ -161,10 +161,10 @@ public class DefaultSettingService_getSettingsTest extends SpringBaseTest
 				try
 				{
 					super.setupMocks();
-					SettingDao mockDAO = mock(SettingDao.class);
-					doThrow(new RuntimeException()).when(mockDAO).getAll();
+					SettingRepository mockDAO = mock(SettingRepository.class);
+					doThrow(new RuntimeException()).when(mockDAO).findAll();
 					
-					settingResource.setSettingDao(mockDAO);
+					settingResource.setSettingRepository(mockDAO);
 				}
 				catch (Throwable t)
 				{
@@ -177,7 +177,7 @@ public class DefaultSettingService_getSettingsTest extends SpringBaseTest
 			{
 				super.tearDownMocks();
 				
-				settingResource.setSettingDao(settingDao);
+				settingResource.setSettingRepository(settingRepo);
 			}
 			
 			@Override

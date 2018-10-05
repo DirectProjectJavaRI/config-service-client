@@ -3,7 +3,7 @@ package org.nhind.config.rest.impl;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -26,7 +26,7 @@ import org.nhindirect.common.rest.exceptions.ServiceMethodException;
 import org.nhindirect.config.model.Certificate;
 import org.nhindirect.config.model.utils.CertUtils;
 import org.nhindirect.config.model.utils.CertUtils.CertContainer;
-import org.nhindirect.config.store.dao.CertificateDao;
+import org.nhindirect.config.repository.CertificateRepository;
 
 public class DefaultCertificateService_addCertificateTest extends SpringBaseTest
 {	
@@ -104,7 +104,7 @@ public class DefaultCertificateService_addCertificateTest extends SpringBaseTest
 			@Override
 			protected void doAssertions() throws Exception
 			{
-				List<org.nhindirect.config.store.Certificate> retrievedCerts = certDao.list((String)null);
+				List<org.nhindirect.config.store.Certificate> retrievedCerts = certRepo.findAll();
 				
 				assertNotNull(retrievedCerts);
 				assertEquals(2, retrievedCerts.size());
@@ -168,7 +168,7 @@ public class DefaultCertificateService_addCertificateTest extends SpringBaseTest
 			@Override
 			protected void doAssertions() throws Exception
 			{
-				List<org.nhindirect.config.store.Certificate> retrievedCerts = certDao.list((String)null);
+				List<org.nhindirect.config.store.Certificate> retrievedCerts = certRepo.findAll();
 				
 				assertNotNull(retrievedCerts);
 				assertEquals(2, retrievedCerts.size());
@@ -232,7 +232,7 @@ public class DefaultCertificateService_addCertificateTest extends SpringBaseTest
 			@Override
 			protected void doAssertions() throws Exception
 			{
-				List<org.nhindirect.config.store.Certificate> retrievedCerts = certDao.list((String)null);
+				List<org.nhindirect.config.store.Certificate> retrievedCerts = certRepo.findAll();
 				
 				assertNotNull(retrievedCerts);
 				assertEquals(2, retrievedCerts.size());
@@ -292,7 +292,7 @@ public class DefaultCertificateService_addCertificateTest extends SpringBaseTest
 			@Override
 			protected void doAssertions() throws Exception
 			{
-				List<org.nhindirect.config.store.Certificate> retrievedCerts = certDao.list((String)null);
+				List<org.nhindirect.config.store.Certificate> retrievedCerts = certRepo.findAll();
 				
 				assertNotNull(retrievedCerts);
 				assertEquals(1, retrievedCerts.size());
@@ -337,11 +337,13 @@ public class DefaultCertificateService_addCertificateTest extends SpringBaseTest
 					
 					Certificate cert = new Certificate();					
 					cert.setData(TestUtils.loadCert("gm2552.der").getEncoded());
+					cert.setOwner("gm2552@cerner.com");
 					
 					certs.add(cert);
 		
 					cert = new Certificate();					
 					cert.setData(TestUtils.loadCert("gm2552.der").getEncoded());
+					cert.setOwner("gm2552@cerner.com");
 					
 					certs.add(cert);
 					
@@ -378,10 +380,10 @@ public class DefaultCertificateService_addCertificateTest extends SpringBaseTest
 				{
 					super.setupMocks();
 					
-					CertificateDao mockDAO = mock(CertificateDao.class);
-					doThrow(new RuntimeException()).when(mockDAO).load((String)any(),(String)any());
+					CertificateRepository mockDAO = mock(CertificateRepository.class);
+					doThrow(new RuntimeException()).when(mockDAO).findByOwnerIgnoreCaseAndThumbprint((String)any(),(String)any());
 					
-					certResource.setCertificateDao(mockDAO);
+					certResource.setCertificateRepository(mockDAO);
 				}
 				catch (Throwable t)
 				{
@@ -394,7 +396,7 @@ public class DefaultCertificateService_addCertificateTest extends SpringBaseTest
 			{
 				super.tearDownMocks();
 				
-				certResource.setCertificateDao(certDao);
+				certResource.setCertificateRepository(certRepo);
 			}			
 			
 			@Override
@@ -442,11 +444,11 @@ public class DefaultCertificateService_addCertificateTest extends SpringBaseTest
 				{
 					super.setupMocks();
 
-					CertificateDao mockDAO = mock(CertificateDao.class);
-					when(mockDAO.load((String)any(),(String)any())).thenReturn(null);
+					CertificateRepository mockDAO = mock(CertificateRepository.class);
+					when(mockDAO.findByOwnerIgnoreCaseAndThumbprint((String)any(),(String)any())).thenReturn(null);
 					doThrow(new RuntimeException()).when(mockDAO).save((org.nhindirect.config.store.Certificate)any());
 					
-					certResource.setCertificateDao(mockDAO);
+					certResource.setCertificateRepository(mockDAO);
 				}
 				catch (Throwable t)
 				{
@@ -459,7 +461,7 @@ public class DefaultCertificateService_addCertificateTest extends SpringBaseTest
 			{
 				super.tearDownMocks();
 				
-				certResource.setCertificateDao(certDao);
+				certResource.setCertificateRepository(certRepo);
 			}			
 			
 			@Override
