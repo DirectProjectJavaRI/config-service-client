@@ -6,6 +6,7 @@ import java.util.Collections;
 import org.nhind.config.rest.SettingService;
 import org.nhind.config.rest.feign.SettingClient;
 import org.nhindirect.common.rest.exceptions.ServiceException;
+import org.nhindirect.common.rest.exceptions.ServiceMethodException;
 import org.nhindirect.config.model.Setting;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -36,7 +37,17 @@ public class DefaultSettingService implements SettingService
 	@Override
 	public Setting getSetting(String name) throws ServiceException 
 	{
-		return settingClient.getSettingByName(name);
+		try
+		{
+			return settingClient.getSettingByName(name);
+		}
+		catch (ServiceMethodException e)
+		{
+			if (e.getResponseCode() == 404)
+				return null;
+			
+			throw e;
+		}
 	}
 
 	@Override
