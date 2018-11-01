@@ -3,6 +3,7 @@ package org.nhind.config.rest.feign;
 import java.util.Collection;
 
 import org.nhindirect.common.rest.exceptions.ServiceException;
+import org.nhindirect.common.rest.feign.DefaultFeignClientConfiguration;
 import org.nhindirect.config.model.DNSRecord;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.MediaType;
@@ -14,7 +15,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
-@FeignClient(name="direct-config-service", url = "${direct.config.service.url}")
+@FeignClient(name="direct-config-service", url = "${direct.config.service.url}", configuration=DefaultFeignClientConfiguration.class)
 public interface DNSClient
 {
     @GetMapping("/dns")
