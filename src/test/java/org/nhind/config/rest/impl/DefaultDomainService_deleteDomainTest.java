@@ -9,6 +9,8 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.util.ArrayList;
+import java.util.Collection;
 
 import org.junit.Test;
 import org.nhind.config.client.SpringBaseTest;
@@ -74,6 +76,7 @@ public class DefaultDomainService_deleteDomainTest extends SpringBaseTest
 				
 			}
 		}	
+
 		
 		@Test
 		public void testRemoveDomain_removeExistingDomain_assertDomainRemoved() throws Exception
@@ -110,6 +113,49 @@ public class DefaultDomainService_deleteDomainTest extends SpringBaseTest
 				}
 			}.perform();
 		}
+		
+		@Test
+		public void testRemoveDomain_removeExistingDomainWithAddresses_assertDomainRemoved() throws Exception
+		{
+			new TestPlan()
+			{
+				protected Domain domain;
+				
+				@Override
+				protected Domain getDomainToAdd()
+				{
+					final Address postmasterAddress = new Address();
+					postmasterAddress.setEmailAddress("me@test.com");
+					
+					domain = new Domain();
+					
+					final Address addr = new Address();
+					addr.setEmailAddress("you@test.com");
+					addr.setStatus(EntityStatus.ENABLED);
+					Collection<Address> addrs = new ArrayList<Address>();
+					addrs.add(addr);
+					
+					domain.setDomainName("test.com");
+					domain.setStatus(EntityStatus.ENABLED);
+					domain.setPostmasterAddress(postmasterAddress);			
+					domain.setAddresses(addrs);
+					
+					return domain;
+				}
+				
+				@Override
+				protected String getDomainNameToRemove()
+				{
+					return "test.com";
+				}
+				
+				@Override
+				protected void doAssertions() throws Exception
+				{
+					assertNull(domainRepo.findByDomainNameIgnoreCase("@test.com"));
+				}
+			}.perform();
+		}		
 		
 		@Test
 		public void testRemoveDomain_nonExxistentDomain_assertNotFound() throws Exception
