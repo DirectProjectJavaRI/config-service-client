@@ -12,6 +12,8 @@ public interface TrustBundleService
 	public Collection<TrustBundle> getTrustBundles(boolean fetchAnchors) throws ServiceException;
 	
 	public Collection<TrustBundleDomainReltn> getTrustBundlesByDomain(String domainName, boolean fetchAnchors) throws ServiceException;	
+
+	public Collection<TrustBundleDomainReltn> getAllTrustBundleDomainReltns(boolean fetchAnchors) throws ServiceException;	
 	
 	public TrustBundle getTrustBundle(String bundleName) throws ServiceException;
 	

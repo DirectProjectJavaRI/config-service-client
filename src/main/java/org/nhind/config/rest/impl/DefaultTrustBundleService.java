@@ -43,6 +43,13 @@ public class DefaultTrustBundleService implements TrustBundleService
 	}
 
 	@Override
+	public Collection<TrustBundleDomainReltn> getAllTrustBundleDomainReltns(boolean fetchAnchors) throws ServiceException
+	{
+		final Collection<TrustBundleDomainReltn> bundles = bundleClient.getAllTrustBundleDomainRelts(fetchAnchors);
+		return (bundles == null) ? Collections.emptyList() : bundles;	
+	}
+	
+	@Override
 	public TrustBundle getTrustBundle(String bundleName) throws ServiceException 
 	{
 		return bundleClient.getTrustBundleByName(bundleName);

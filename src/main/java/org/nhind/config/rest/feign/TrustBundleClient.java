@@ -26,6 +26,10 @@ public interface TrustBundleClient
     public Collection<TrustBundleDomainReltn> getTrustBundlesByDomain(@PathVariable("domainName") String domainName, 
     		@RequestParam(name="fetchAnchors", defaultValue="true") boolean fetchAnchors) throws ServiceException;
     
+    @GetMapping(value="/trustbundle/domains/bundles/reltns")
+    public Collection<TrustBundleDomainReltn> getAllTrustBundleDomainRelts(
+    		@RequestParam(name="fetchAnchors", defaultValue="true") boolean fetchAnchors) throws ServiceException;
+
     @GetMapping("/trustbundle/{bundleName}")
     public TrustBundle getTrustBundleByName(@PathVariable("bundleName") String bundleName) throws ServiceException;
     
