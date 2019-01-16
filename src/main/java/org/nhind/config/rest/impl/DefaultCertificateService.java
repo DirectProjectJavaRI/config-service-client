@@ -6,6 +6,7 @@ import java.util.Collections;
 import org.nhind.config.rest.CertificateService;
 import org.nhind.config.rest.feign.CertificateClient;
 import org.nhindirect.common.rest.exceptions.ServiceException;
+import org.nhindirect.common.rest.exceptions.ServiceMethodException;
 import org.nhindirect.config.model.Certificate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -44,7 +45,16 @@ public class DefaultCertificateService implements CertificateService
 	public Certificate getCertificatesByOwnerAndThumbprint(
 			String owner, String thumbprint) throws ServiceException 
 	{
-		return certClient.getCertificatesByOwnerAndThumbprint(owner, thumbprint);
+		try
+		{
+			return certClient.getCertificatesByOwnerAndThumbprint(owner, thumbprint);
+		}
+		catch (ServiceMethodException e)
+		{
+			if (e.getResponseCode() == 404)
+				return null;
+			throw e;
+		}
 	}
 
 	@Override

@@ -6,6 +6,7 @@ import java.util.Collections;
 import org.nhind.config.rest.CertPolicyService;
 import org.nhind.config.rest.feign.CertificatePolicyClient;
 import org.nhindirect.common.rest.exceptions.ServiceException;
+import org.nhindirect.common.rest.exceptions.ServiceMethodException;
 import org.nhindirect.config.model.CertPolicy;
 import org.nhindirect.config.model.CertPolicyGroup;
 import org.nhindirect.config.model.CertPolicyGroupDomainReltn;
@@ -39,7 +40,16 @@ public class DefaultCertPolicyService implements CertPolicyService
 	@Override
 	public CertPolicy getPolicyByName(String policyName) throws ServiceException 
 	{
-		return certPolClient.getPolicyByName(policyName);
+		try
+		{
+			return certPolClient.getPolicyByName(policyName);
+		}
+		catch (ServiceMethodException e)
+		{
+			if (e.getResponseCode() == 404)
+				return null;
+			throw e;
+		}
 	}
 
 	@Override
@@ -70,7 +80,16 @@ public class DefaultCertPolicyService implements CertPolicyService
 	@Override
 	public CertPolicyGroup getPolicyGroup(String groupName) throws ServiceException 
 	{
-		return certPolClient.getPolicyGroupByName(groupName);		
+		try
+		{
+			return certPolClient.getPolicyGroupByName(groupName);		
+		}
+		catch (ServiceMethodException e)
+		{
+			if (e.getResponseCode() == 404)
+				return null;
+			throw e;
+		}
 	}
 
 	@Override

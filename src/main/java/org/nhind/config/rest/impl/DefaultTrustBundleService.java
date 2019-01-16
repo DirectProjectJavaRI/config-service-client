@@ -7,6 +7,7 @@ import java.util.Collections;
 import org.nhind.config.rest.TrustBundleService;
 import org.nhind.config.rest.feign.TrustBundleClient;
 import org.nhindirect.common.rest.exceptions.ServiceException;
+import org.nhindirect.common.rest.exceptions.ServiceMethodException;
 import org.nhindirect.config.model.TrustBundle;
 import org.nhindirect.config.model.TrustBundleDomainReltn;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,7 +53,16 @@ public class DefaultTrustBundleService implements TrustBundleService
 	@Override
 	public TrustBundle getTrustBundle(String bundleName) throws ServiceException 
 	{
-		return bundleClient.getTrustBundleByName(bundleName);
+		try
+		{
+			return bundleClient.getTrustBundleByName(bundleName);
+		}
+		catch (ServiceMethodException e)
+		{
+			if (e.getResponseCode() == 404)
+				return null;
+			throw e;
+		}
 	}
 
 	@Override
