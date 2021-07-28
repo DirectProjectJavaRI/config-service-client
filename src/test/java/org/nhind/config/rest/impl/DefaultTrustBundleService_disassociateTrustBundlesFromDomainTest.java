@@ -1,17 +1,18 @@
 package org.nhind.config.rest.impl;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import org.junit.jupiter.api.Test;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import org.junit.Test;
 import org.nhind.config.client.SpringBaseTest;
 import org.nhind.config.testbase.BaseTestPlan;
 
@@ -23,6 +24,8 @@ import org.nhindirect.config.model.EntityStatus;
 import org.nhindirect.config.model.TrustBundle;
 import org.nhindirect.config.repository.DomainRepository;
 import org.nhindirect.config.repository.TrustBundleDomainReltnRepository;
+
+import reactor.core.publisher.Mono;
 
 public class DefaultTrustBundleService_disassociateTrustBundlesFromDomainTest extends SpringBaseTest
 {
@@ -153,7 +156,7 @@ public class DefaultTrustBundleService_disassociateTrustBundlesFromDomainTest ex
 				protected void doAssertions() throws Exception
 				{
 					final Collection<org.nhindirect.config.store.TrustBundleDomainReltn> bundleRelts =  
-							bundleDomainRepo.findByDomain(domainRepo.findByDomainNameIgnoreCase(getDomainNameToAssociate()));
+							bundleDomainRepo.findByDomainId(domainRepo.findByDomainNameIgnoreCase(getDomainNameToAssociate()).block().getId()).collectList().block();
 					
 					assertTrue(bundleRelts.isEmpty());
 					
@@ -269,8 +272,11 @@ public class DefaultTrustBundleService_disassociateTrustBundlesFromDomainTest ex
 						DomainRepository mockDomainDAO = mock(DomainRepository.class);
 						TrustBundleDomainReltnRepository reltnDAO = mock(TrustBundleDomainReltnRepository.class);
 						
-						when(mockDomainDAO.findByDomainNameIgnoreCase("test.com")).thenReturn(new org.nhindirect.config.store.Domain());
-						doThrow(new RuntimeException()).when(reltnDAO).deleteByDomain((org.nhindirect.config.store.Domain)any());
+						final org.nhindirect.config.store.Domain dom = new org.nhindirect.config.store.Domain();
+						dom.setDomainName("Test");
+						
+						when(mockDomainDAO.findByDomainNameIgnoreCase((String)any())).thenReturn(Mono.just(dom));
+						doThrow(new RuntimeException()).when(reltnDAO).deleteByDomainId(any());
 						
 						bundleResource.setDomainRepository(mockDomainDAO);
 						bundleResource.setTrustBundleDomainReltnRepository(reltnDAO);

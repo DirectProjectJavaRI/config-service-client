@@ -1,19 +1,20 @@
 package org.nhind.config.rest.impl;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
+
+import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
-import org.junit.Test;
 import org.nhind.config.client.SpringBaseTest;
 import org.nhind.config.testbase.BaseTestPlan;
 import org.nhind.config.testbase.TestUtils;
@@ -110,7 +111,7 @@ public class DefaultAnchorService_addAnchorTest extends SpringBaseTest
 				@Override
 				protected void doAssertions() throws Exception
 				{
-					List<org.nhindirect.config.store.Anchor> anchors = anchorRepo.findAll();
+					List<org.nhindirect.config.store.Anchor> anchors = anchorRepo.findAll().collectList().block();
 					
 					assertNotNull(anchors);
 					assertEquals(2, anchors.size());
@@ -178,7 +179,7 @@ public class DefaultAnchorService_addAnchorTest extends SpringBaseTest
 				@Override
 				protected void doAssertions() throws Exception
 				{
-					List<org.nhindirect.config.store.Anchor> anchors = anchorRepo.findAll();
+					List<org.nhindirect.config.store.Anchor> anchors = anchorRepo.findAll().collectList().block();
 					
 					assertNotNull(anchors);
 					assertEquals(2, anchors.size());
@@ -246,7 +247,7 @@ public class DefaultAnchorService_addAnchorTest extends SpringBaseTest
 				@Override
 				protected void doAssertions() throws Exception
 				{
-					List<org.nhindirect.config.store.Anchor> anchors = anchorRepo.findAll();
+					List<org.nhindirect.config.store.Anchor> anchors = anchorRepo.findAll().collectList().block();
 					
 					assertNotNull(anchors);
 					assertEquals(2, anchors.size());

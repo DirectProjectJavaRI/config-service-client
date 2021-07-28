@@ -1,22 +1,24 @@
 package org.nhind.config.rest.impl;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import org.junit.jupiter.api.Test;
+
 import java.io.File;
 import java.security.cert.X509Certificate;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
-import org.junit.Test;
 import org.nhind.config.client.SpringBaseTest;
 import org.nhind.config.testbase.BaseTestPlan;
 import org.nhind.config.testbase.TestUtils;
@@ -104,7 +106,7 @@ public class DefaultCertificateService_addCertificateTest extends SpringBaseTest
 			@Override
 			protected void doAssertions() throws Exception
 			{
-				List<org.nhindirect.config.store.Certificate> retrievedCerts = certRepo.findAll();
+				List<org.nhindirect.config.store.Certificate> retrievedCerts = certRepo.findAll().collectList().block();
 				
 				assertNotNull(retrievedCerts);
 				assertEquals(2, retrievedCerts.size());
@@ -121,9 +123,9 @@ public class DefaultCertificateService_addCertificateTest extends SpringBaseTest
 					assertEquals(CertUtils.getOwner(addedX509Cert), retrievedCert.getOwner());
 					assertEquals(Thumbprint.toThumbprint(addedX509Cert).toString(), retrievedCert.getThumbprint());
 					assertEquals(retrievedX509Cert, addedX509Cert);
-					assertEquals(org.nhindirect.config.store.EntityStatus.NEW, retrievedCert.getStatus());
-					assertEquals(addedX509Cert.getNotAfter(), retrievedCert.getValidEndDate().getTime());
-					assertEquals(addedX509Cert.getNotBefore(), retrievedCert.getValidStartDate().getTime());
+					assertEquals(org.nhindirect.config.store.EntityStatus.NEW.ordinal(), retrievedCert.getStatus());
+					assertEquals(addedX509Cert.getNotAfter().getTime(), retrievedCert.getValidEndDate().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli());
+					assertEquals(addedX509Cert.getNotBefore().getTime(), retrievedCert.getValidStartDate().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli());
 				}
 									
 			}
@@ -168,7 +170,7 @@ public class DefaultCertificateService_addCertificateTest extends SpringBaseTest
 			@Override
 			protected void doAssertions() throws Exception
 			{
-				List<org.nhindirect.config.store.Certificate> retrievedCerts = certRepo.findAll();
+				List<org.nhindirect.config.store.Certificate> retrievedCerts = certRepo.findAll().collectList().block();
 				
 				assertNotNull(retrievedCerts);
 				assertEquals(2, retrievedCerts.size());
@@ -185,9 +187,9 @@ public class DefaultCertificateService_addCertificateTest extends SpringBaseTest
 					assertEquals(CertUtils.getOwner(addedX509Cert), retrievedCert.getOwner());
 					assertEquals(Thumbprint.toThumbprint(addedX509Cert).toString(), retrievedCert.getThumbprint());
 					assertEquals(retrievedX509Cert, addedX509Cert);
-					assertEquals(org.nhindirect.config.store.EntityStatus.NEW, retrievedCert.getStatus());
-					assertEquals(addedX509Cert.getNotAfter(), retrievedCert.getValidEndDate().getTime());
-					assertEquals(addedX509Cert.getNotBefore(), retrievedCert.getValidStartDate().getTime());
+					assertEquals(org.nhindirect.config.store.EntityStatus.NEW.ordinal(), retrievedCert.getStatus());
+					assertEquals(addedX509Cert.getNotAfter().getTime(), retrievedCert.getValidEndDate().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli());
+					assertEquals(addedX509Cert.getNotBefore().getTime(), retrievedCert.getValidStartDate().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli());
 				}
 									
 			}
@@ -232,7 +234,7 @@ public class DefaultCertificateService_addCertificateTest extends SpringBaseTest
 			@Override
 			protected void doAssertions() throws Exception
 			{
-				List<org.nhindirect.config.store.Certificate> retrievedCerts = certRepo.findAll();
+				List<org.nhindirect.config.store.Certificate> retrievedCerts = certRepo.findAll().collectList().block();
 				
 				assertNotNull(retrievedCerts);
 				assertEquals(2, retrievedCerts.size());
@@ -249,9 +251,9 @@ public class DefaultCertificateService_addCertificateTest extends SpringBaseTest
 					assertEquals(CertUtils.getOwner(addedX509Cert), retrievedCert.getOwner());
 					assertEquals(Thumbprint.toThumbprint(addedX509Cert).toString(), retrievedCert.getThumbprint());
 					assertEquals(retrievedX509Cert, addedX509Cert);
-					assertEquals(org.nhindirect.config.store.EntityStatus.NEW, retrievedCert.getStatus());
-					assertEquals(addedX509Cert.getNotAfter(), retrievedCert.getValidEndDate().getTime());
-					assertEquals(addedX509Cert.getNotBefore(), retrievedCert.getValidStartDate().getTime());
+					assertEquals(org.nhindirect.config.store.EntityStatus.NEW.ordinal(), retrievedCert.getStatus());
+					assertEquals(addedX509Cert.getNotAfter().getTime(), retrievedCert.getValidEndDate().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli());
+					assertEquals(addedX509Cert.getNotBefore().getTime(), retrievedCert.getValidStartDate().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli());
 				}
 									
 			}
@@ -292,7 +294,7 @@ public class DefaultCertificateService_addCertificateTest extends SpringBaseTest
 			@Override
 			protected void doAssertions() throws Exception
 			{
-				List<org.nhindirect.config.store.Certificate> retrievedCerts = certRepo.findAll();
+				List<org.nhindirect.config.store.Certificate> retrievedCerts = certRepo.findAll().collectList().block();
 				
 				assertNotNull(retrievedCerts);
 				assertEquals(1, retrievedCerts.size());
@@ -311,9 +313,9 @@ public class DefaultCertificateService_addCertificateTest extends SpringBaseTest
 					assertEquals(CertUtils.getOwner(addedX509Cert), retrievedCert.getOwner());
 					assertEquals(Thumbprint.toThumbprint(addedX509Cert).toString(), retrievedCert.getThumbprint());
 					assertEquals(retrievedX509Cert, addedX509Cert);
-					assertEquals(org.nhindirect.config.store.EntityStatus.NEW, retrievedCert.getStatus());
-					assertEquals(addedX509Cert.getNotAfter(), retrievedCert.getValidEndDate().getTime());
-					assertEquals(addedX509Cert.getNotBefore(), retrievedCert.getValidStartDate().getTime());
+					assertEquals(org.nhindirect.config.store.EntityStatus.NEW.ordinal(), retrievedCert.getStatus());
+					assertEquals(addedX509Cert.getNotAfter().getTime(), retrievedCert.getValidEndDate().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli());
+					assertEquals(addedX509Cert.getNotBefore().getTime(), retrievedCert.getValidStartDate().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli());
 				}
 									
 			}

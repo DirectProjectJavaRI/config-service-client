@@ -1,16 +1,17 @@
 package org.nhind.config.rest.impl;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import org.junit.jupiter.api.Test;
+
 import java.util.Collection;
 
-import org.junit.Test;
 import org.nhind.config.client.SpringBaseTest;
 import org.nhind.config.testbase.BaseTestPlan;
 
@@ -19,6 +20,8 @@ import org.nhindirect.common.rest.exceptions.ServiceMethodException;
 
 import org.nhindirect.config.model.Setting;
 import org.nhindirect.config.repository.SettingRepository;
+
+import reactor.core.publisher.Mono;
 
 public class DefaultSettingService_deleteSettingTest extends SpringBaseTest
 {
@@ -88,7 +91,7 @@ public class DefaultSettingService_deleteSettingTest extends SpringBaseTest
 				@Override
 				protected void doAssertions() throws Exception
 				{
-					Collection<org.nhindirect.config.store.Setting> retrievedSettings = settingRepo.findAll();
+					Collection<org.nhindirect.config.store.Setting> retrievedSettings = settingRepo.findAll().collectList().block();
 					
 					assertNotNull(retrievedSettings);
 					assertEquals(0, retrievedSettings.size());
@@ -187,7 +190,10 @@ public class DefaultSettingService_deleteSettingTest extends SpringBaseTest
 
 						SettingRepository mockDAO = mock(SettingRepository.class);
 						org.nhindirect.config.store.Setting setting = new org.nhindirect.config.store.Setting();
-						when(mockDAO.findByNameIgnoreCase(eq("setting1"))).thenReturn(setting);
+						setting.setName("Test");
+						
+						
+						when(mockDAO.findByNameIgnoreCase(eq("setting1"))).thenReturn(Mono.just(setting));
 						doThrow(new RuntimeException()).when(mockDAO).deleteByNameIgnoreCase(eq("setting1"));
 						
 						settingResource.setSettingRepository(mockDAO);

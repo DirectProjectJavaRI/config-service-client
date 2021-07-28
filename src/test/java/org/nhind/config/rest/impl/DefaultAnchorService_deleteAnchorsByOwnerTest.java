@@ -1,16 +1,16 @@
 package org.nhind.config.rest.impl;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 
+import org.junit.jupiter.api.Test;
+
 import java.util.ArrayList;
 import java.util.Collection;
 
-
-import org.junit.Test;
 import org.nhind.config.client.SpringBaseTest;
 import org.nhind.config.testbase.BaseTestPlan;
 import org.nhind.config.testbase.TestUtils;
@@ -128,7 +128,7 @@ public class DefaultAnchorService_deleteAnchorsByOwnerTest extends SpringBaseTes
 			@Override
 			protected void doAssertions() throws Exception
 			{
-				final Collection<org.nhindirect.config.store.Anchor> anchors = anchorRepo.findAll();
+				final Collection<org.nhindirect.config.store.Anchor> anchors = anchorRepo.findAll().collectList().block();
 				assertTrue(anchors.isEmpty());
 			}
 		}.perform();
@@ -184,7 +184,7 @@ public class DefaultAnchorService_deleteAnchorsByOwnerTest extends SpringBaseTes
 			@Override
 			protected void doAssertions() throws Exception
 			{
-				final Collection<org.nhindirect.config.store.Anchor> anchors = anchorRepo.findAll();
+				final Collection<org.nhindirect.config.store.Anchor> anchors = anchorRepo.findAll().collectList().block();
 				assertEquals(1, anchors.size());
 			}
 		}.perform();

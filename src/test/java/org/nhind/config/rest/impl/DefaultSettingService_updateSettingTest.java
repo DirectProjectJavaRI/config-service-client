@@ -1,14 +1,15 @@
 package org.nhind.config.rest.impl;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
 import org.nhind.config.client.SpringBaseTest;
 import org.nhind.config.testbase.BaseTestPlan;
 
@@ -17,6 +18,8 @@ import org.nhindirect.common.rest.exceptions.ServiceMethodException;
 
 import org.nhindirect.config.model.Setting;
 import org.nhindirect.config.repository.SettingRepository;
+
+import reactor.core.publisher.Mono;
 
 public class DefaultSettingService_updateSettingTest extends SpringBaseTest
 {
@@ -208,7 +211,8 @@ public class DefaultSettingService_updateSettingTest extends SpringBaseTest
 					
 					SettingRepository mockDAO = mock(SettingRepository.class);
 					org.nhindirect.config.store.Setting setting = new org.nhindirect.config.store.Setting();
-					when(mockDAO.findByNameIgnoreCase(eq("setting1"))).thenReturn(setting);
+					setting.setName("setting1");
+					when(mockDAO.findByNameIgnoreCase(eq("setting1"))).thenReturn(Mono.just(setting));
 					doThrow(new RuntimeException()).when(mockDAO).save((org.nhindirect.config.store.Setting)any());
 					
 					settingResource.setSettingRepository(mockDAO);

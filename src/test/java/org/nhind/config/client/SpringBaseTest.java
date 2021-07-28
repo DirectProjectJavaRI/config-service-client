@@ -3,8 +3,8 @@ package org.nhind.config.client;
 import java.io.File;
 
 import org.apache.commons.io.FileUtils;
-import org.junit.Before;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.nhind.config.rest.AddressService;
 import org.nhind.config.rest.AnchorService;
 import org.nhind.config.rest.CertPolicyService;
@@ -16,12 +16,14 @@ import org.nhind.config.rest.TrustBundleService;
 import org.nhindirect.config.repository.AddressRepository;
 import org.nhindirect.config.repository.AnchorRepository;
 import org.nhindirect.config.repository.CertPolicyGroupDomainReltnRepository;
+import org.nhindirect.config.repository.CertPolicyGroupReltnRepository;
 import org.nhindirect.config.repository.CertPolicyGroupRepository;
 import org.nhindirect.config.repository.CertPolicyRepository;
 import org.nhindirect.config.repository.CertificateRepository;
 import org.nhindirect.config.repository.DNSRepository;
 import org.nhindirect.config.repository.DomainRepository;
 import org.nhindirect.config.repository.SettingRepository;
+import org.nhindirect.config.repository.TrustBundleAnchorRepository;
 import org.nhindirect.config.repository.TrustBundleDomainReltnRepository;
 import org.nhindirect.config.repository.TrustBundleRepository;
 import org.nhindirect.config.resources.AddressResource;
@@ -36,9 +38,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @SpringBootTest(classes = TestApplication.class, webEnvironment = WebEnvironment.DEFINED_PORT)
 @TestPropertySource("classpath:bootstrap.properties")
 public abstract class SpringBaseTest
@@ -100,6 +102,9 @@ public abstract class SpringBaseTest
 	protected TrustBundleRepository bundleRepo;	
 	
 	@Autowired
+	protected TrustBundleAnchorRepository bundleAnchorRepo;	
+	
+	@Autowired
 	protected TrustBundleDomainReltnRepository bundleDomainRepo;
 	
 	@Autowired
@@ -124,9 +129,12 @@ public abstract class SpringBaseTest
 	protected CertPolicyGroupRepository policyGroupRepo;
 	
 	@Autowired
-	protected CertPolicyGroupDomainReltnRepository groupReltnRepo;
+	protected CertPolicyGroupDomainReltnRepository groupDomainReltnRepo;
 	
-	@Before
+	@Autowired
+	protected CertPolicyGroupReltnRepository policyGroupReltn;
+	
+	@BeforeEach
 	public void setUp()
 	{
 		
@@ -161,26 +169,30 @@ public abstract class SpringBaseTest
 	
 	protected void cleanDataStore() throws Exception
 	{		
-		anchorRepo.deleteAll();
+		anchorRepo.deleteAll().block();
 		
-		groupReltnRepo.deleteAll();
+		groupDomainReltnRepo.deleteAll().block();
 		
-		addressRepo.deleteAll();
+		policyGroupReltn.deleteAll().block();
 		
-		bundleDomainRepo.deleteAll();
+		addressRepo.deleteAll().block();
 		
-		bundleRepo.deleteAll();
+		bundleAnchorRepo.deleteAll().block();
 		
-		domainRepo.deleteAll();
+		bundleDomainRepo.deleteAll().block();
 		
-		policyGroupRepo.deleteAll();
+		bundleRepo.deleteAll().block();
 		
-		policyRepo.deleteAll();
+		domainRepo.deleteAll().block();
 		
-		certRepo.deleteAll();
+		policyGroupRepo.deleteAll().block();
 		
-		dnsRepo.deleteAll();
+		policyRepo.deleteAll().block();
 		
-		settingRepo.deleteAll();
+		certRepo.deleteAll().block();
+		
+		dnsRepo.deleteAll().block();
+		
+		settingRepo.deleteAll().block();
 	}
 }

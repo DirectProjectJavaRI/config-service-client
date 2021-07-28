@@ -1,17 +1,18 @@
 package org.nhind.config.rest.impl;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import org.junit.jupiter.api.Test;
+
 import java.util.ArrayList;
 import java.util.Collection;
 
-import org.junit.Test;
 import org.nhind.config.client.SpringBaseTest;
 import org.nhind.config.testbase.BaseTestPlan;
 
@@ -25,6 +26,8 @@ import org.nhindirect.config.model.Domain;
 import org.nhindirect.config.model.EntityStatus;
 import org.nhindirect.config.repository.CertPolicyGroupDomainReltnRepository;
 import org.nhindirect.config.repository.DomainRepository;
+
+import reactor.core.publisher.Mono;
 
 public class DefaultCertPolicyService_getPolicyGroupsByDomainTest extends SpringBaseTest
 {
@@ -353,8 +356,11 @@ public class DefaultCertPolicyService_getPolicyGroupsByDomainTest extends Spring
 					CertPolicyGroupDomainReltnRepository mockPolicyDAO = mock(CertPolicyGroupDomainReltnRepository.class);
 					DomainRepository mockDomainDAO = mock(DomainRepository.class);
 					
-					when(mockDomainDAO.findByDomainNameIgnoreCase((String)any())).thenReturn(new org.nhindirect.config.store.Domain());
-					doThrow(new RuntimeException()).when(mockPolicyDAO).findByDomain((org.nhindirect.config.store.Domain)any());
+					final org.nhindirect.config.store.Domain dom = new org.nhindirect.config.store.Domain();
+					dom.setDomainName("Test");
+					
+					when(mockDomainDAO.findByDomainNameIgnoreCase((String)any())).thenReturn(Mono.just(dom));
+					doThrow(new RuntimeException()).when(mockPolicyDAO).findByDomainId(any());
 					
 					certPolResource.setCertPolicyGroupDomainReltnRepository(mockPolicyDAO);
 					certPolResource.setDomainRepository(mockDomainDAO);
@@ -370,7 +376,7 @@ public class DefaultCertPolicyService_getPolicyGroupsByDomainTest extends Spring
 			{
 				super.tearDownMocks();
 				
-				certPolResource.setCertPolicyGroupDomainReltnRepository(groupReltnRepo);
+				certPolResource.setCertPolicyGroupDomainReltnRepository(groupDomainReltnRepo);
 				certPolResource.setDomainRepository(domainRepo);
 			}
 			

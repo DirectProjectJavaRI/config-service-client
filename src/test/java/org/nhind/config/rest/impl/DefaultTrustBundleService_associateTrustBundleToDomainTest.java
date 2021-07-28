@@ -1,19 +1,19 @@
 package org.nhind.config.rest.impl;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import org.junit.jupiter.api.Test;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
-
-import org.junit.Test;
 import org.nhind.config.client.SpringBaseTest;
 import org.nhind.config.testbase.BaseTestPlan;
 
@@ -27,6 +27,8 @@ import org.nhindirect.config.model.TrustBundle;
 import org.nhindirect.config.repository.DomainRepository;
 import org.nhindirect.config.repository.TrustBundleDomainReltnRepository;
 import org.nhindirect.config.repository.TrustBundleRepository;
+
+import reactor.core.publisher.Mono;
 
 public class DefaultTrustBundleService_associateTrustBundleToDomainTest extends SpringBaseTest
 {
@@ -169,14 +171,18 @@ public class DefaultTrustBundleService_associateTrustBundleToDomainTest extends 
 				protected void doAssertions() throws Exception
 				{
 					
+					org.nhindirect.config.store.Domain domain = domainRepo.findByDomainNameIgnoreCase(getDomainNameToAssociate()).block();
+					
 					final Collection<org.nhindirect.config.store.TrustBundleDomainReltn> bundleRelts =  
-							bundleDomainRepo.findByDomain(domainRepo.findByDomainNameIgnoreCase(getDomainNameToAssociate()));
+							bundleDomainRepo.findByDomainId(domain.getId()).collectList().block();
 					
 					assertEquals(1, bundleRelts.size());
 					
+					org.nhindirect.config.store.TrustBundle bundle = bundleRepo.findByBundleNameIgnoreCase(getBundleNameToAssociate()).block();
+					
 					final org.nhindirect.config.store.TrustBundleDomainReltn bundleReltn = bundleRelts.iterator().next();
-					assertEquals(getDomainNameToAssociate(), bundleReltn.getDomain().getDomainName());
-					assertEquals(getBundleNameToAssociate(), bundleReltn.getTrustBundle().getBundleName());
+					assertEquals(domain.getId(), Long.valueOf(bundleReltn.getDomainId()));
+					assertEquals(bundle.getId(), Long.valueOf(bundleReltn.getTrustBundleId()));
 					assertTrue(bundleReltn.isIncoming());
 					assertTrue(bundleReltn.isOutgoing());
 				}
@@ -254,14 +260,18 @@ public class DefaultTrustBundleService_associateTrustBundleToDomainTest extends 
 				protected void doAssertions() throws Exception
 				{
 					
+					org.nhindirect.config.store.Domain domain = domainRepo.findByDomainNameIgnoreCase(getDomainNameToAssociate()).block();
+					
 					final Collection<org.nhindirect.config.store.TrustBundleDomainReltn> bundleRelts =  
-							bundleDomainRepo.findByDomain(domainRepo.findByDomainNameIgnoreCase(getDomainNameToAssociate()));
+							bundleDomainRepo.findByDomainId(domain.getId()).collectList().block();
 					
 					assertEquals(1, bundleRelts.size());
 					
+					org.nhindirect.config.store.TrustBundle bundle = bundleRepo.findByBundleNameIgnoreCase(getBundleNameToAssociate()).block();
+					
 					final org.nhindirect.config.store.TrustBundleDomainReltn bundleReltn = bundleRelts.iterator().next();
-					assertEquals(getDomainNameToAssociate(), bundleReltn.getDomain().getDomainName());
-					assertEquals(getBundleNameToAssociate(), bundleReltn.getTrustBundle().getBundleName());
+					assertEquals(domain.getId(), Long.valueOf(bundleReltn.getDomainId()));
+					assertEquals(bundle.getId(), Long.valueOf(bundleReltn.getTrustBundleId()));
 					assertFalse(bundleReltn.isIncoming());
 					assertFalse(bundleReltn.isOutgoing());
 				}
@@ -488,7 +498,11 @@ public class DefaultTrustBundleService_associateTrustBundleToDomainTest extends 
 						
 						TrustBundleRepository mockDAO = mock(TrustBundleRepository.class);
 						DomainRepository mockDomainDAO = mock(DomainRepository.class);
-						when(mockDAO.findByBundleNameIgnoreCase(eq("testBundle1"))).thenReturn(new org.nhindirect.config.store.TrustBundle());
+						
+						final org.nhindirect.config.store.TrustBundle bundle = new org.nhindirect.config.store.TrustBundle();
+						bundle.setBundleName("Test");
+						
+						when(mockDAO.findByBundleNameIgnoreCase(eq("testBundle1"))).thenReturn(Mono.just(bundle));
 						doThrow(new RuntimeException()).when(mockDomainDAO).findByDomainNameIgnoreCase(eq("test.com"));
 						
 						bundleResource.setTrustBundleRepository(mockDAO);
@@ -559,8 +573,16 @@ public class DefaultTrustBundleService_associateTrustBundleToDomainTest extends 
 						TrustBundleRepository mockDAO = mock(TrustBundleRepository.class);
 						DomainRepository mockDomainDAO = mock(DomainRepository.class);
 						TrustBundleDomainReltnRepository mockReltnRepo = mock(TrustBundleDomainReltnRepository.class);
-						when(mockDAO.findByBundleNameIgnoreCase("testBundle1")).thenReturn(new org.nhindirect.config.store.TrustBundle());
-						when(mockDomainDAO.findByDomainNameIgnoreCase("test.com")).thenReturn(new org.nhindirect.config.store.Domain());
+						
+						final org.nhindirect.config.store.TrustBundle bundle = new org.nhindirect.config.store.TrustBundle();
+						bundle.setBundleName("Test");
+						
+						when(mockDAO.findByBundleNameIgnoreCase("testBundle1")).thenReturn(Mono.just(bundle));
+						
+						final org.nhindirect.config.store.Domain dom = new org.nhindirect.config.store.Domain();
+						dom.setDomainName("Test");
+						
+						when(mockDomainDAO.findByDomainNameIgnoreCase("test.com")).thenReturn(Mono.just(dom));
 						doThrow(new RuntimeException()).when(mockReltnRepo).save((org.nhindirect.config.store.TrustBundleDomainReltn)any());
 						
 						bundleResource.setTrustBundleRepository(mockDAO);

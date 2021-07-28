@@ -1,19 +1,20 @@
 package org.nhind.config.rest.impl;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import org.junit.jupiter.api.Test;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import org.junit.Test;
 import org.nhind.config.client.SpringBaseTest;
 import org.nhind.config.testbase.BaseTestPlan;
 
@@ -21,6 +22,8 @@ import org.nhindirect.common.rest.exceptions.ServiceException;
 import org.nhindirect.common.rest.exceptions.ServiceMethodException;
 import org.nhindirect.config.model.TrustBundle;
 import org.nhindirect.config.repository.TrustBundleRepository;
+
+import reactor.core.publisher.Mono;
 
 public class DefaultTrustBundleService_deleteTrustBundleTest extends SpringBaseTest
 {
@@ -105,7 +108,7 @@ public class DefaultTrustBundleService_deleteTrustBundleTest extends SpringBaseT
 			@Override
 			protected void doAssertions() throws Exception
 			{
-				assertNull(bundleRepo.findByBundleNameIgnoreCase("testBundle1"));
+				assertNull(bundleRepo.findByBundleNameIgnoreCase("testBundle1").block());
 			}
 		}.perform();
 	}
@@ -206,7 +209,10 @@ public class DefaultTrustBundleService_deleteTrustBundleTest extends SpringBaseT
 					super.setupMocks();
 					TrustBundleRepository mockDAO = mock(TrustBundleRepository.class);
 					
-					when(mockDAO.findByBundleNameIgnoreCase((String)any())).thenReturn(new org.nhindirect.config.store.TrustBundle());
+					final org.nhindirect.config.store.TrustBundle bundle = new org.nhindirect.config.store.TrustBundle();
+					bundle.setBundleName("Test");
+					
+					when(mockDAO.findByBundleNameIgnoreCase((String)any())).thenReturn(Mono.just(bundle));
 					doThrow(new RuntimeException()).when(mockDAO).deleteById((Long)any());
 					
 					bundleResource.setTrustBundleRepository(mockDAO);
