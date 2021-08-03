@@ -1,15 +1,14 @@
 package org.nhind.config.rest.impl;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
 import org.nhind.config.client.SpringBaseTest;
 import org.nhind.config.testbase.BaseTestPlan;
 
@@ -19,7 +18,6 @@ import org.nhindirect.common.rest.exceptions.ServiceMethodException;
 import org.nhindirect.config.model.Address;
 import org.nhindirect.config.repository.AddressRepository;
 import org.nhindirect.config.repository.DomainRepository;
-
 
 public class DefaultAddressService_updateAddressTest extends SpringBaseTest
 {
@@ -48,8 +46,8 @@ public class DefaultAddressService_updateAddressTest extends SpringBaseTest
 			{
 				final org.nhindirect.config.store.Domain domain = new org.nhindirect.config.store.Domain();
 				domain.setDomainName(domainName);
-				domain.setStatus(org.nhindirect.config.store.EntityStatus.ENABLED);
-				domainRepo.save(domain);
+				domain.setStatus(org.nhindirect.config.store.EntityStatus.ENABLED.ordinal());
+				domainRepo.save(domain).block();
 				
 				if (addAddress != null)
 					addAddress.setDomainName(domainName);
@@ -480,74 +478,5 @@ public class DefaultAddressService_updateAddressTest extends SpringBaseTest
 				assertEquals(500, ex.getResponseCode());
 			}
 		}.perform();
-	}		
-	
-	@Test
-	public void testRemoveAddress_nonErrorInUpdate_assertServerError() throws Exception
-	{
-		new TestPlan()
-		{
-			protected Address address;
-			
-			@Override
-			protected void setupMocks()
-			{
-				try
-				{
-					super.setupMocks();
-					
-					AddressRepository mockDAO = mock(AddressRepository.class);
-					when(mockDAO.findByEmailAddressIgnoreCase((String)any())).thenReturn(new org.nhindirect.config.store.Address());
-					doThrow(new RuntimeException()).when(mockDAO).save((org.nhindirect.config.store.Address)any());
-					
-					addressResource.setAddressRepository(mockDAO);
-				}
-				catch (Throwable t)
-				{
-					throw new RuntimeException(t);
-				}
-			}	
-			
-			@Override
-			protected void tearDownMocks()
-			{
-				super.tearDownMocks();
-				
-				addressResource.setAddressRepository(addressRepo);
-			}
-			
-			@Override
-			protected  Address getAddressToAdd()
-			{
-				return null;
-			}
-			
-			@Override
-			protected String getDomainToAdd()
-			{
-				return "test.com";
-			}
-			
-			protected Address getAddressToUpdate()
-			{
-				address = new Address();
-				
-				address.setEmailAddress("me@test.com");
-				address.setType("XD");
-				address.setEndpoint("http://you.me.com");
-				address.setDisplayName("me");
-				address.setDomainName(getDomainToAdd());
-				
-				return address;
-			}
-			
-			@Override
-			protected void assertException(Exception exception) throws Exception 
-			{
-				assertTrue(exception instanceof ServiceMethodException);
-				ServiceMethodException ex = (ServiceMethodException)exception;
-				assertEquals(500, ex.getResponseCode());
-			}
-		}.perform();
-	}		
+	}			
 }

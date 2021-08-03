@@ -1,18 +1,19 @@
 package org.nhind.config.rest.impl;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 
+import org.junit.jupiter.api.Test;
+
 import java.util.ArrayList;
 import java.util.Collection;
 
 
-import org.junit.Test;
 import org.nhind.config.client.SpringBaseTest;
 import org.nhind.config.testbase.BaseTestPlan;
 
@@ -51,8 +52,8 @@ public class DefaultAddressService_getAddressesByDomainTest extends SpringBaseTe
 				{
 					final org.nhindirect.config.store.Domain domain = new org.nhindirect.config.store.Domain();
 					domain.setDomainName(domainName);
-					domain.setStatus(org.nhindirect.config.store.EntityStatus.ENABLED);
-					domainRepo.save(domain);
+					domain.setStatus(org.nhindirect.config.store.EntityStatus.ENABLED.ordinal());
+					domainRepo.save(domain).block();
 					
 					if (addAddress != null)
 						addAddress.setDomainName(domainName);
@@ -290,7 +291,7 @@ public class DefaultAddressService_getAddressesByDomainTest extends SpringBaseTe
 					{
 						super.setupMocks();
 						AddressRepository mockDAO = mock(AddressRepository.class);
-						doThrow(new RuntimeException()).when(mockDAO).findByDomain((org.nhindirect.config.store.Domain)any());
+						doThrow(new RuntimeException()).when(mockDAO).findByDomainId(any());
 						
 						addressResource.setAddressRepository(mockDAO);					}
 					catch (Throwable t)

@@ -1,17 +1,18 @@
 package org.nhind.config.rest.impl;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import org.junit.jupiter.api.Test;
+
 import java.util.ArrayList;
 import java.util.Collection;
 
-import org.junit.Test;
 import org.nhind.config.client.SpringBaseTest;
 
 import org.nhind.config.testbase.BaseTestPlan;
@@ -22,6 +23,8 @@ import org.nhindirect.common.rest.exceptions.ServiceMethodException;
 import org.nhindirect.config.model.CertPolicy;
 import org.nhindirect.config.repository.CertPolicyRepository;
 import org.nhindirect.policy.PolicyLexicon;
+
+import reactor.core.publisher.Mono;
 
 
 public class DefaultCertPolicyService_deletePolicyTest extends SpringBaseTest
@@ -109,7 +112,7 @@ public class DefaultCertPolicyService_deletePolicyTest extends SpringBaseTest
 				@Override
 				protected void doAssertions() throws Exception
 				{
-					assertNull(policyRepo.findByPolicyNameIgnoreCase(getPolicyNameToDelete()));
+					assertNull(policyRepo.findByPolicyNameIgnoreCase(getPolicyNameToDelete()).block());
 				}
 			}.perform();
 		}		
@@ -210,8 +213,10 @@ public class DefaultCertPolicyService_deletePolicyTest extends SpringBaseTest
 						super.setupMocks();
 						CertPolicyRepository mockDAO = mock(CertPolicyRepository.class);
 						
-						when(mockDAO.findByPolicyNameIgnoreCase((String)any())).thenReturn(new org.nhindirect.config.store.CertPolicy());
-						doThrow(new RuntimeException()).when(mockDAO).deleteById((Long)any());
+						final org.nhindirect.config.store.CertPolicy pol = new org.nhindirect.config.store.CertPolicy();
+						pol.setPolicyName("Test");
+						
+						when(mockDAO.findByPolicyNameIgnoreCase((String)any())).thenReturn(Mono.just(pol));
 						
 						certPolResource.setCertPolicyRepository(mockDAO);
 					}

@@ -1,21 +1,22 @@
 package org.nhind.config.rest.impl;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import org.junit.jupiter.api.Test;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 
-import org.junit.Test;
 import org.nhind.config.client.SpringBaseTest;
 import org.nhind.config.testbase.BaseTestPlan;
 
@@ -30,6 +31,8 @@ import org.nhindirect.config.model.TrustBundleDomainReltn;
 import org.nhindirect.config.repository.DomainRepository;
 import org.nhindirect.config.repository.TrustBundleDomainReltnRepository;
 import org.nhindirect.config.repository.TrustBundleRepository;
+
+import reactor.core.publisher.Mono;
 
 public class DefaultTrustBundleService_getTrustBundlesByDomainTest extends SpringBaseTest
 {
@@ -500,8 +503,11 @@ public class DefaultTrustBundleService_getTrustBundlesByDomainTest extends Sprin
 						DomainRepository mockDomainDAO = mock(DomainRepository.class);
 						TrustBundleDomainReltnRepository mockReltnDAO = mock(TrustBundleDomainReltnRepository.class);
 						
-						when(mockDomainDAO.findByDomainNameIgnoreCase("test.com")).thenReturn(new org.nhindirect.config.store.Domain());
-						doThrow(new RuntimeException()).when(mockReltnDAO).findByDomain((org.nhindirect.config.store.Domain)any());
+						final org.nhindirect.config.store.Domain dom = new org.nhindirect.config.store.Domain();
+						dom.setDomainName("Test");
+						
+						when(mockDomainDAO.findByDomainNameIgnoreCase("test.com")).thenReturn(Mono.just(dom));
+						doThrow(new RuntimeException()).when(mockReltnDAO).findByDomainId(any());
 						
 						bundleResource.setTrustBundleDomainReltnRepository(mockReltnDAO);
 						bundleResource.setDomainRepository(mockDomainDAO);

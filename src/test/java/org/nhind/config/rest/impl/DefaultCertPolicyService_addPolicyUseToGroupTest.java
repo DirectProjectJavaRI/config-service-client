@@ -1,17 +1,18 @@
 package org.nhind.config.rest.impl;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import org.junit.jupiter.api.Test;
+
 import java.util.ArrayList;
 import java.util.Collection;
 
-import org.junit.Test;
 import org.nhind.config.client.SpringBaseTest;
 import org.nhind.config.testbase.BaseTestPlan;
 
@@ -24,6 +25,8 @@ import org.nhindirect.config.model.CertPolicyUse;
 import org.nhindirect.config.repository.CertPolicyGroupRepository;
 import org.nhindirect.config.repository.CertPolicyRepository;
 import org.nhindirect.policy.PolicyLexicon;
+
+import reactor.core.publisher.Mono;
 
 public class DefaultCertPolicyService_addPolicyUseToGroupTest extends SpringBaseTest
 {
@@ -348,7 +351,11 @@ public class DefaultCertPolicyService_addPolicyUseToGroupTest extends SpringBase
 					super.setupMocks();
 					CertPolicyRepository mockDAO = mock(CertPolicyRepository.class);
 					CertPolicyGroupRepository mockGroupDAO = mock(CertPolicyGroupRepository.class);
-					when(mockGroupDAO.findByPolicyGroupNameIgnoreCase((String)any())).thenReturn(new org.nhindirect.config.store.CertPolicyGroup());
+					
+					final org.nhindirect.config.store.CertPolicyGroup group = new org.nhindirect.config.store.CertPolicyGroup();
+					group.setPolicyGroupName("Test");
+					
+					when(mockGroupDAO.findByPolicyGroupNameIgnoreCase((String)any())).thenReturn(Mono.just(group));
 					doThrow(new RuntimeException()).when(mockDAO).findByPolicyNameIgnoreCase((String)any());
 					
 					certPolResource.setCertPolicyRepository(mockDAO);
@@ -426,8 +433,16 @@ public class DefaultCertPolicyService_addPolicyUseToGroupTest extends SpringBase
 					super.setupMocks();
 					CertPolicyRepository mockDAO = mock(CertPolicyRepository.class);
 					CertPolicyGroupRepository mockGroupDAO = mock(CertPolicyGroupRepository.class);
-					when(mockGroupDAO.findByPolicyGroupNameIgnoreCase((String)any())).thenReturn(new org.nhindirect.config.store.CertPolicyGroup());
-					when(mockDAO.findByPolicyNameIgnoreCase((String)any())).thenReturn(new org.nhindirect.config.store.CertPolicy());
+					
+					final org.nhindirect.config.store.CertPolicyGroup group = new org.nhindirect.config.store.CertPolicyGroup();
+					group.setPolicyGroupName("Test");
+					
+					when(mockGroupDAO.findByPolicyGroupNameIgnoreCase((String)any())).thenReturn(Mono.just(group));
+					
+					final org.nhindirect.config.store.CertPolicy pol = new org.nhindirect.config.store.CertPolicy();
+					pol.setPolicyName("Test");
+					
+					when(mockDAO.findByPolicyNameIgnoreCase((String)any())).thenReturn(Mono.just(pol));
 					doThrow(new RuntimeException()).when(mockGroupDAO).save((org.nhindirect.config.store.CertPolicyGroup)any());
 					
 					certPolResource.setCertPolicyRepository(mockDAO);
