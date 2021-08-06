@@ -32,6 +32,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 
 @FeignClient(name="direct-config-service", url = "${direct.config.service.url}", configuration=DefaultFeignClientConfiguration.class)
 public interface SettingClient 
@@ -45,8 +46,14 @@ public interface SettingClient
     @PutMapping("/setting/{name}/{value}")  
     public void addSetting(@PathVariable("name") String name, @PathVariable("value") String value) throws ServiceException;
     
+    @PutMapping("/setting")  
+    public void addSetting(@RequestBody Setting setting) throws ServiceException;
+    
     @PostMapping("/setting/{name}/{value}")  
     public void updateSetting(@PathVariable("name") String name, @PathVariable("value") String value) throws ServiceException;
+    
+    @PostMapping("/setting")  
+    public void updateSetting(@RequestBody Setting setting) throws ServiceException;
     
     @DeleteMapping("/setting/{name}")
     public void removeSettingByName(@PathVariable("name") String name) throws ServiceException;

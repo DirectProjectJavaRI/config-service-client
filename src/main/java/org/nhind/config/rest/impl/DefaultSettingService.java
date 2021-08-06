@@ -53,13 +53,19 @@ public class DefaultSettingService implements SettingService
 	@Override
 	public void addSetting(String name, String value) throws ServiceException 
 	{	
-		settingClient.addSetting(name, value);	
+		final Setting setting = new Setting();
+		setting.setName(name);
+		setting.setValue(value);
+		settingClient.addSetting(setting);	
 	}
 
 	@Override
 	public void updateSetting(String name, String value) throws ServiceException 
 	{
-		settingClient.updateSetting(name, value);	
+		final Setting setting = new Setting();
+		setting.setName(name);
+		setting.setValue(value);
+		settingClient.updateSetting(setting);	
 	}
 
 	@Override
