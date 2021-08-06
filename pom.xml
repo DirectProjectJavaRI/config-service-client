@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.nhind</groupId>
 	<artifactId>config-service-client</artifactId>
-	<version>8.0.0</version>
+	<version>8.0.1</version>
 	<packaging>jar</packaging>
 	<name>NHIN Direct Java config service client proxy</name>
     <description>NHIN Direct Java config service client proxy</description>
@@ -79,7 +79,7 @@
         <dependency>
             <groupId>org.nhind</groupId>
             <artifactId>config-service-jar</artifactId>
-            <version>8.0.0</version>
+            <version>8.0.1</version>
             <scope>test</scope>           
         </dependency>  		
 		<dependency>
@@ -161,8 +161,8 @@
 	                </goals>
 	              </execution>
 	            </executions>					
-			</plugin>	
-			<!--  for releases only 					
+			</plugin>
+			<!--  					
 	        <plugin>
                <groupId>org.apache.maven.plugins</groupId>
                <artifactId>maven-gpg-plugin</artifactId>
@@ -177,7 +177,7 @@
                </executions>
                <version>3.0.1</version>
             </plugin>
-            -->				
+            -->		
 		</plugins>
 	</build>
 	<reporting>
