@@ -60,16 +60,30 @@
         <dependency>
             <groupId>org.nhind</groupId>
             <artifactId>config-model</artifactId>
-            <version>8.0.0</version>
+            <version>8.1.0-SNAPSHOT</version>
         </dependency>  	
         <dependency>
             <groupId>org.nhind</groupId>
             <artifactId>direct-common</artifactId>
-            <version>8.0.0</version>		          
+            <version>8.1.0-SNAPSHOT</version>		          
         </dependency>  
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-starter-openfeign</artifactId>
+			<exclusions>
+				<exclusion>
+					<groupId>org.bouncycastle</groupId>
+					<artifactId>bcprov-jdk15on</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.bouncycastle</groupId>
+					<artifactId>bcmail-jdk15on</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.bouncycastle</groupId>
+					<artifactId>bcpkix-jdk15on</artifactId>
+				</exclusion>
+			</exclusions>			
 		</dependency>			
 		<dependency>
 		    <groupId>org.springframework.boot</groupId>
@@ -79,7 +93,7 @@
         <dependency>
             <groupId>org.nhind</groupId>
             <artifactId>config-service-jar</artifactId>
-            <version>8.0.1</version>
+            <version>8.1.0-SNAPSHOT</version>
             <scope>test</scope>           
         </dependency>  		
 		<dependency>
