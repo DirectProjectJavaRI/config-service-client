@@ -5,15 +5,13 @@ import java.util.Collection;
 import java.util.Collections;
 
 import org.nhind.config.rest.TrustBundleService;
-import org.nhind.config.rest.feign.TrustBundleClient;
+import org.nhind.config.rest.exchange.TrustBundleClient;
 import org.nhindirect.common.rest.exceptions.ServiceException;
 import org.nhindirect.common.rest.exceptions.ServiceMethodException;
 import org.nhindirect.config.model.TrustBundle;
 import org.nhindirect.config.model.TrustBundleDomainReltn;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
-@Component
 public class DefaultTrustBundleService implements TrustBundleService
 {
 	protected TrustBundleClient bundleClient;

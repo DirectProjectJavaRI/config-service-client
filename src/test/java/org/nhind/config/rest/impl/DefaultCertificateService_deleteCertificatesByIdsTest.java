@@ -286,7 +286,7 @@ public class DefaultCertificateService_deleteCertificatesByIdsTest extends Sprin
 				@Override
 				protected Collection<Long> getIdsToRemove()
 				{
-					return Arrays.asList(new Long(1234L));
+					return Arrays.asList(Long.valueOf(1234L));
 				}
 				
 				@Override

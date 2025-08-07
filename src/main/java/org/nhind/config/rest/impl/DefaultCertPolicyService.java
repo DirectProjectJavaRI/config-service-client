@@ -4,7 +4,7 @@ import java.util.Collection;
 import java.util.Collections;
 
 import org.nhind.config.rest.CertPolicyService;
-import org.nhind.config.rest.feign.CertificatePolicyClient;
+import org.nhind.config.rest.exchange.CertificatePolicyClient;
 import org.nhindirect.common.rest.exceptions.ServiceException;
 import org.nhindirect.common.rest.exceptions.ServiceMethodException;
 import org.nhindirect.config.model.CertPolicy;
@@ -12,9 +12,7 @@ import org.nhindirect.config.model.CertPolicyGroup;
 import org.nhindirect.config.model.CertPolicyGroupDomainReltn;
 import org.nhindirect.config.model.CertPolicyGroupUse;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
-@Component
 public class DefaultCertPolicyService implements CertPolicyService
 {
 	protected CertificatePolicyClient certPolClient;

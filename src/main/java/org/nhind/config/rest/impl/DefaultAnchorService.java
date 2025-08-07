@@ -4,13 +4,11 @@ import java.util.Collection;
 import java.util.Collections;
 
 import org.nhind.config.rest.AnchorService;
-import org.nhind.config.rest.feign.AnchorClient;
+import org.nhind.config.rest.exchange.AnchorClient;
 import org.nhindirect.common.rest.exceptions.ServiceException;
 import org.nhindirect.config.model.Anchor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
-@Component
 public class DefaultAnchorService implements AnchorService
 {
 	protected AnchorClient anchorClient;

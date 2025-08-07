@@ -4,14 +4,12 @@ import java.util.Collection;
 import java.util.Collections;
 
 import org.nhind.config.rest.SettingService;
-import org.nhind.config.rest.feign.SettingClient;
+import org.nhind.config.rest.exchange.SettingClient;
 import org.nhindirect.common.rest.exceptions.ServiceException;
 import org.nhindirect.common.rest.exceptions.ServiceMethodException;
 import org.nhindirect.config.model.Setting;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
-@Component
 public class DefaultSettingService implements SettingService
 {
 	protected SettingClient settingClient;

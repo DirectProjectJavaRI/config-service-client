@@ -19,36 +19,35 @@ STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
 THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-package org.nhind.config.rest.feign;
+package org.nhind.config.rest.exchange;
 
 import java.util.Collection;
 
 import org.nhindirect.common.rest.exceptions.ServiceException;
-import org.nhindirect.common.rest.feign.DefaultFeignClientConfiguration;
-import org.nhindirect.config.model.DNSRecord;
-import org.springframework.cloud.openfeign.FeignClient;
+import org.nhindirect.config.model.Address;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.service.annotation.GetExchange;
+import org.springframework.web.service.annotation.PutExchange;
+import org.springframework.web.service.annotation.PostExchange;
+import org.springframework.web.service.annotation.DeleteExchange;
 
-@FeignClient(name="direct-config-service", url = "${direct.config.service.url}", configuration=DefaultFeignClientConfiguration.class)
-public interface DNSClient
+public interface AddressClient
 {
-    @GetMapping("/dns")
-    public Collection<DNSRecord> getDNSRecords(@RequestParam(name="type", defaultValue = "-1")int type, 
-    		@RequestParam(name="name", defaultValue="") String name) throws ServiceException;
+	@GetExchange("/address/{address}")
+	public Address getAddress(@PathVariable("address") String address) throws ServiceException;
+	
+	@GetExchange("/address/domain/{domainName}")     
+    public Collection<Address> getAddressesByDomain(@PathVariable("domainName") String domainName) throws ServiceException;
     
-    @PutMapping(value="/dns", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public void addDNSRecord(@RequestBody DNSRecord record) throws ServiceException;
+    @PutExchange(value="/address", contentType=MediaType.APPLICATION_JSON_VALUE,  accept = MediaType.APPLICATION_JSON_VALUE)   
+    public ResponseEntity<Void> addAddress(@RequestBody Address address) throws ServiceException;
     
-    @PostMapping(value="/dns", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public void updateDNSRecord(@RequestBody DNSRecord updateRecord) throws ServiceException;
+    @PostExchange(value="/address", contentType=MediaType.APPLICATION_JSON_VALUE, accept = MediaType.APPLICATION_JSON_VALUE)     
+    public void updateAddress(@RequestBody Address address) throws ServiceException;
     
-    @DeleteMapping(value="/dns/{ids}")
-    public void removeDNSRecordsByIds(@PathVariable("ids") String ids) throws ServiceException;
+    @DeleteExchange(value="address/{address}")    
+    public ResponseEntity<Void> removeAddress(@PathVariable("address") String address) throws ServiceException; 
 }
