@@ -11,7 +11,7 @@
     <parent>
 	   <groupId>org.springframework.boot</groupId>
 	   <artifactId>spring-boot-dependencies</artifactId>
-	   <version>3.5.0</version>
+	   <version>4.0.1</version>
 	   <relativePath />
     </parent>		
 	<scm>
@@ -39,16 +39,15 @@
     </licenses>  
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<spring-cloud-dependencies.version>2025.0.0</spring-cloud-dependencies.version>
 	</properties>	
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
 				<groupId>org.springframework.cloud</groupId>
 				<artifactId>spring-cloud-dependencies</artifactId>
-				<version>${spring-cloud-dependencies.version}</version>
+				 <version>2025.1.0</version>
 				<type>pom</type>
-				<scope>import</scope>
+				<scope>import</scope>		
 			</dependency>		
 		</dependencies>
 	</dependencyManagement>	
