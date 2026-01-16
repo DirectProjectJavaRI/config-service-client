@@ -18,43 +18,37 @@ GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWE
 STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF 
 THE POSSIBILITY OF SUCH DAMAGE.
 */
-
-package org.nhind.config.rest.feign;
+package org.nhind.config.rest.exchange;
 
 import java.util.Collection;
 
 import org.nhindirect.common.rest.exceptions.ServiceException;
-import org.nhindirect.common.rest.feign.DefaultFeignClientConfiguration;
-import org.nhindirect.config.model.Setting;
-import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.nhindirect.config.model.Certificate;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.service.annotation.DeleteExchange;
+import org.springframework.web.service.annotation.GetExchange;
+import org.springframework.web.service.annotation.PutExchange;
 
-@FeignClient(name="direct-config-service", url = "${direct.config.service.url}", configuration=DefaultFeignClientConfiguration.class)
-public interface SettingClient 
+public interface CertificateClient
 {
-    @GetMapping("/setting")
-    public Collection<Setting> getAllSettings() throws ServiceException;
+    @GetExchange("/certificate")
+    public Collection<Certificate> getAllCertificates() throws ServiceException;
     
-    @GetMapping("/setting/{name}")
-    public Setting getSettingByName(@PathVariable("name") String name) throws ServiceException;
+    @GetExchange("/certificate/{owner}")
+    public Collection<Certificate> getCertificatesByOwner(@PathVariable("owner") String owner) throws ServiceException;
     
-    @PutMapping("/setting/{name}/{value}")  
-    public void addSetting(@PathVariable("name") String name, @PathVariable("value") String value) throws ServiceException;
+    @GetExchange("/certificate/{owner}/{thumbprint}")
+    public Certificate getCertificatesByOwnerAndThumbprint(@PathVariable("owner") String owner, 
+    		@PathVariable("thumbprint") String thumbprint) throws ServiceException;
     
-    @PutMapping("/setting")  
-    public void addSetting(@RequestBody Setting setting) throws ServiceException;
+    @PutExchange(value="/certificate", contentType=MediaType.APPLICATION_JSON_VALUE,  accept = MediaType.APPLICATION_JSON_VALUE)       
+    public void addCertificate(@RequestBody Certificate cert) throws ServiceException;
+
+    @DeleteExchange("/certificate/ids/{ids}")   
+    public void removeCertificatesByIds(@PathVariable("ids") String ids) throws ServiceException;
     
-    @PostMapping("/setting/{name}/{value}")  
-    public void updateSetting(@PathVariable("name") String name, @PathVariable("value") String value) throws ServiceException;
-    
-    @PostMapping("/setting")  
-    public void updateSetting(@RequestBody Setting setting) throws ServiceException;
-    
-    @DeleteMapping("/setting/{name}")
-    public void removeSettingByName(@PathVariable("name") String name) throws ServiceException;
+    @DeleteExchange("/certificate/{owner}")  
+    public void removeCertificatesByOwner(@PathVariable("owner") String owner) throws ServiceException;
 }

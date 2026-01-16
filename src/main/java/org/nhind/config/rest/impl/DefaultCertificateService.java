@@ -4,14 +4,12 @@ import java.util.Collection;
 import java.util.Collections;
 
 import org.nhind.config.rest.CertificateService;
-import org.nhind.config.rest.feign.CertificateClient;
+import org.nhind.config.rest.exchange.CertificateClient;
 import org.nhindirect.common.rest.exceptions.ServiceException;
 import org.nhindirect.common.rest.exceptions.ServiceMethodException;
 import org.nhindirect.config.model.Certificate;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
-@Component
 public class DefaultCertificateService implements CertificateService
 {
 	protected CertificateClient certClient;

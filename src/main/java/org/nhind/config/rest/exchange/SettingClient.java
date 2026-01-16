@@ -19,39 +19,40 @@ STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
 THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-package org.nhind.config.rest.feign;
+package org.nhind.config.rest.exchange;
 
 import java.util.Collection;
 
 import org.nhindirect.common.rest.exceptions.ServiceException;
-import org.nhindirect.common.rest.feign.DefaultFeignClientConfiguration;
-import org.nhindirect.config.model.Domain;
-import org.springframework.cloud.openfeign.FeignClient;
+import org.nhindirect.config.model.Setting;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.service.annotation.DeleteExchange;
+import org.springframework.web.service.annotation.GetExchange;
+import org.springframework.web.service.annotation.PostExchange;
+import org.springframework.web.service.annotation.PutExchange;
 
-@FeignClient(name="direct-config-service", url = "${direct.config.service.url}", configuration=DefaultFeignClientConfiguration.class)
-public interface DomainClient
+public interface SettingClient 
 {
-    @GetMapping("/domain/{domain}")
-    public Domain getDomain(@PathVariable("domain") String domain) throws ServiceException;
+    @GetExchange("/setting")
+    public Collection<Setting> getAllSettings() throws ServiceException;
     
-    @GetMapping("/domain")
-    public Collection<Domain> searchDomains(@RequestParam(name="domainName", defaultValue="") String domainName,
-    		@RequestParam(name="entityStatus", defaultValue="")String entityStatus) throws ServiceException;
+    @GetExchange("/setting/{name}")
+    public Setting getSettingByName(@PathVariable("name") String name) throws ServiceException;
     
-    @PutMapping("/domain")
-    public void addDomain(@RequestBody Domain domain) throws ServiceException;  
+    @PutExchange(value="/setting/{name}/{value}", contentType=MediaType.APPLICATION_JSON_VALUE,  accept = MediaType.APPLICATION_JSON_VALUE)  
+    public void addSetting(@PathVariable("name") String name, @PathVariable("value") String value) throws ServiceException;
     
-    @PostMapping(value="/domain", consumes = MediaType.APPLICATION_JSON_VALUE)     
-    public void updateDomain(@RequestBody Domain domain) throws ServiceException; 
+    @PutExchange(value="/setting", contentType=MediaType.APPLICATION_JSON_VALUE,  accept = MediaType.APPLICATION_JSON_VALUE)  
+    public void addSetting(@RequestBody Setting setting) throws ServiceException;
     
-    @DeleteMapping("/domain/{domain}")
-    public void removedDomain(@PathVariable("domain") String domain) throws ServiceException;    
+    @PostExchange(value="/setting/{name}/{value}", contentType=MediaType.APPLICATION_JSON_VALUE,  accept = MediaType.APPLICATION_JSON_VALUE)  
+    public void updateSetting(@PathVariable("name") String name, @PathVariable("value") String value) throws ServiceException;
+    
+    @PostExchange(value="/setting", contentType=MediaType.APPLICATION_JSON_VALUE,  accept = MediaType.APPLICATION_JSON_VALUE)  
+    public void updateSetting(@RequestBody Setting setting) throws ServiceException;
+    
+    @DeleteExchange("/setting/{name}")
+    public void removeSettingByName(@PathVariable("name") String name) throws ServiceException;
 }
