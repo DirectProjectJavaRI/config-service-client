@@ -4,14 +4,12 @@ import java.util.Collection;
 import java.util.Collections;
 
 import org.nhind.config.rest.AddressService;
-import org.nhind.config.rest.feign.AddressClient;
+import org.nhind.config.rest.exchange.AddressClient;
 import org.nhindirect.common.rest.exceptions.ServiceException;
 import org.nhindirect.common.rest.exceptions.ServiceMethodException;
 import org.nhindirect.config.model.Address;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
-@Component
 public class DefaultAddressService implements AddressService
 {
 	protected AddressClient addrClient;

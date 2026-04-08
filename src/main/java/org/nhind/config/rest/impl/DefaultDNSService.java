@@ -4,13 +4,11 @@ import java.util.Collection;
 import java.util.Collections;
 
 import org.nhind.config.rest.DNSService;
-import org.nhind.config.rest.feign.DNSClient;
+import org.nhind.config.rest.exchange.DNSClient;
 import org.nhindirect.common.rest.exceptions.ServiceException;
 import org.nhindirect.config.model.DNSRecord;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
-@Component
 public class DefaultDNSService implements DNSService
 {
 	protected DNSClient dnsClient;

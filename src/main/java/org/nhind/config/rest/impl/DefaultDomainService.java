@@ -4,15 +4,13 @@ import java.util.Collection;
 import java.util.Collections;
 
 import org.nhind.config.rest.DomainService;
-import org.nhind.config.rest.feign.DomainClient;
+import org.nhind.config.rest.exchange.DomainClient;
 import org.nhindirect.common.rest.exceptions.ServiceException;
 import org.nhindirect.common.rest.exceptions.ServiceMethodException;
 import org.nhindirect.config.model.Domain;
 import org.nhindirect.config.model.EntityStatus;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
-@Component
 public class DefaultDomainService implements DomainService
 {
 	protected DomainClient domainClient;

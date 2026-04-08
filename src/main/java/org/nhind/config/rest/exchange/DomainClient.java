@@ -18,40 +18,37 @@ GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWE
 STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF 
 THE POSSIBILITY OF SUCH DAMAGE.
 */
-package org.nhind.config.rest.feign;
+
+package org.nhind.config.rest.exchange;
 
 import java.util.Collection;
 
 import org.nhindirect.common.rest.exceptions.ServiceException;
-import org.nhindirect.common.rest.feign.DefaultFeignClientConfiguration;
-import org.nhindirect.config.model.Certificate;
-import org.springframework.cloud.openfeign.FeignClient;
+import org.nhindirect.config.model.Domain;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.service.annotation.DeleteExchange;
+import org.springframework.web.service.annotation.GetExchange;
+import org.springframework.web.service.annotation.PostExchange;
+import org.springframework.web.service.annotation.PutExchange;
 
-@FeignClient(name="direct-config-service", url = "${direct.config.service.url}", configuration=DefaultFeignClientConfiguration.class)
-public interface CertificateClient
+public interface DomainClient
 {
-    @GetMapping("/certificate")
-    public Collection<Certificate> getAllCertificates() throws ServiceException;
+    @GetExchange("/domain/{domain}")
+    public Domain getDomain(@PathVariable("domain") String domain) throws ServiceException;
     
-    @GetMapping("/certificate/{owner}")
-    public Collection<Certificate> getCertificatesByOwner(@PathVariable("owner") String owner) throws ServiceException;
+    @GetExchange("/domain")
+    public Collection<Domain> searchDomains(@RequestParam(name="domainName", defaultValue="") String domainName,
+    		@RequestParam(name="entityStatus", defaultValue="")String entityStatus) throws ServiceException;
     
-    @GetMapping("/certificate/{owner}/{thumbprint}")
-    public Certificate getCertificatesByOwnerAndThumbprint(@PathVariable("owner") String owner, 
-    		@PathVariable("thumbprint") String thumbprint) throws ServiceException;
+    @PutExchange(value="/domain", contentType=MediaType.APPLICATION_JSON_VALUE,  accept = MediaType.APPLICATION_JSON_VALUE)
+    public void addDomain(@RequestBody Domain domain) throws ServiceException;  
     
-    @PutMapping(value="/certificate", consumes = MediaType.APPLICATION_JSON_VALUE)       
-    public void addCertificate(@RequestBody Certificate cert) throws ServiceException;
-
-    @DeleteMapping("/certificate/ids/{ids}")   
-    public void removeCertificatesByIds(@PathVariable("ids") String ids) throws ServiceException;
+    @PostExchange(value="/domain", contentType=MediaType.APPLICATION_JSON_VALUE,  accept = MediaType.APPLICATION_JSON_VALUE)     
+    public void updateDomain(@RequestBody Domain domain) throws ServiceException; 
     
-    @DeleteMapping("/certificate/{owner}")  
-    public void removeCertificatesByOwner(@PathVariable("owner") String owner) throws ServiceException;
+    @DeleteExchange("/domain/{domain}")
+    public void removedDomain(@PathVariable("domain") String domain) throws ServiceException;    
 }

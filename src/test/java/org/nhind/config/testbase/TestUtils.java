@@ -34,7 +34,6 @@ public class TestUtils
 		return fromFile(signerBasePath, authorityFileName);
 	}		
 	
-	@SuppressWarnings("deprecation")
 	protected static final X509Certificate fromFile(String base, String file) throws Exception
 	{
 		File fl = new File(base + file);
