@@ -24,6 +24,7 @@ import org.nhind.config.rest.impl.DefaultDNSService;
 import org.nhind.config.rest.impl.DefaultDomainService;
 import org.nhind.config.rest.impl.DefaultSettingService;
 import org.nhind.config.rest.impl.DefaultTrustBundleService;
+import org.nhindirect.common.rest.exchange.DirectRestClientBuilderConfig;
 import org.nhindirect.common.rest.exchange.DirectWebClientBuilderConfig;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
@@ -32,6 +33,8 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
+import org.springframework.web.client.RestClient;
+import org.springframework.web.client.support.RestClientAdapter;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.support.WebClientAdapter;
 import org.springframework.web.service.invoker.HttpServiceProxyFactory;
@@ -39,24 +42,24 @@ import org.springframework.web.service.invoker.HttpServiceProxyFactory;
 @AutoConfiguration
 @ConditionalOnClass(WebClient.class )
 @ConditionalOnProperty(name="direct.config.service.url")
-@Import(DirectWebClientBuilderConfig.class)
+@Import(DirectRestClientBuilderConfig.class)
 public class ConfigurationClientAutoConfiguration {
 
 	@Value("${direct.config.service.url}")
 	protected String serviceIdentifier;
 	
-	protected HttpServiceProxyFactory configServiceProxyFactory(WebClient.Builder webClientBuilder) {
+	protected HttpServiceProxyFactory configServiceProxyFactory(RestClient.Builder restClientBuilder) {
 		
-		final var client = webClientBuilder.baseUrl(serviceIdentifier).build();
-		return HttpServiceProxyFactory.builderFor(WebClientAdapter.create(client)).build();
+		final var client = restClientBuilder.baseUrl(serviceIdentifier).build();
+		return HttpServiceProxyFactory.builderFor(RestClientAdapter.create(client)).build();
 		
 	}
 	
 	@ConditionalOnMissingBean
 	@Bean
-	AddressClient directAddressClient(WebClient.Builder webClientBuilder) {
+	AddressClient directAddressClient(RestClient.Builder restClientBuilder) {
 		
-		return configServiceProxyFactory(webClientBuilder).createClient(AddressClient.class);
+		return configServiceProxyFactory(restClientBuilder).createClient(AddressClient.class);
 	}
 	
 	@ConditionalOnMissingBean
@@ -69,9 +72,9 @@ public class ConfigurationClientAutoConfiguration {
 	
 	@ConditionalOnMissingBean
 	@Bean
-	AnchorClient directAnchorClient(WebClient.Builder webClientBuilder) {
+	AnchorClient directAnchorClient(RestClient.Builder restClientBuilder) {
 		
-		return configServiceProxyFactory(webClientBuilder).createClient(AnchorClient.class);
+		return configServiceProxyFactory(restClientBuilder).createClient(AnchorClient.class);
 	}
 	
 	@ConditionalOnMissingBean
@@ -83,9 +86,9 @@ public class ConfigurationClientAutoConfiguration {
 	
 	@ConditionalOnMissingBean
 	@Bean
-	CertificateClient directCertificateClient(WebClient.Builder webClientBuilder) {
+	CertificateClient directCertificateClient(RestClient.Builder restClientBuilder) {
 		
-		return configServiceProxyFactory(webClientBuilder).createClient(CertificateClient.class);
+		return configServiceProxyFactory(restClientBuilder).createClient(CertificateClient.class);
 	}
 	
 	@ConditionalOnMissingBean
@@ -97,7 +100,7 @@ public class ConfigurationClientAutoConfiguration {
 	
 	@ConditionalOnMissingBean
 	@Bean
-	CertificatePolicyClient directCertificatePolicyClient(WebClient.Builder webClientBuilder) {
+	CertificatePolicyClient directCertificatePolicyClient(RestClient.Builder webClientBuilder) {
 		
 		return configServiceProxyFactory(webClientBuilder).createClient(CertificatePolicyClient.class);
 	}
@@ -111,7 +114,7 @@ public class ConfigurationClientAutoConfiguration {
 	
 	@ConditionalOnMissingBean
 	@Bean
-	DNSClient directDnsClient(WebClient.Builder webClientBuilder) {
+	DNSClient directDnsClient(RestClient.Builder webClientBuilder) {
 		
 		return configServiceProxyFactory(webClientBuilder).createClient(DNSClient.class);
 	}
@@ -125,7 +128,7 @@ public class ConfigurationClientAutoConfiguration {
 	
 	@ConditionalOnMissingBean
 	@Bean
-	DomainClient directDomainClient(WebClient.Builder webClientBuilder) {
+	DomainClient directDomainClient(RestClient.Builder webClientBuilder) {
 		
 		return configServiceProxyFactory(webClientBuilder).createClient(DomainClient.class);
 	}
@@ -139,9 +142,9 @@ public class ConfigurationClientAutoConfiguration {
 	
 	@ConditionalOnMissingBean
 	@Bean
-	SettingClient directSettingClient(WebClient.Builder webClientBuilder) {
+	SettingClient directSettingClient(RestClient.Builder restClientBuilder) {
 		
-		return configServiceProxyFactory(webClientBuilder).createClient(SettingClient.class);
+		return configServiceProxyFactory(restClientBuilder).createClient(SettingClient.class);
 	}
 	
 	@ConditionalOnMissingBean
@@ -153,9 +156,9 @@ public class ConfigurationClientAutoConfiguration {
 	
 	@ConditionalOnMissingBean
 	@Bean
-	TrustBundleClient directTrustBundleClient(WebClient.Builder webClientBuilder) {
+	TrustBundleClient directTrustBundleClient(RestClient.Builder restClientBuilder) {
 		
-		return configServiceProxyFactory(webClientBuilder).createClient(TrustBundleClient.class);
+		return configServiceProxyFactory(restClientBuilder).createClient(TrustBundleClient.class);
 	}
 	
 	@ConditionalOnMissingBean
@@ -164,5 +167,4 @@ public class ConfigurationClientAutoConfiguration {
 		
 		return new DefaultTrustBundleService(trustBundleClient);
 	}
-	
 }
