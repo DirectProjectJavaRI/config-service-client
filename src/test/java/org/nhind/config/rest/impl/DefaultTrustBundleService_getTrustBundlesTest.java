@@ -9,7 +9,6 @@ import static org.mockito.Mockito.mock;
 
 import org.junit.jupiter.api.Test;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -100,7 +99,7 @@ public class DefaultTrustBundleService_getTrustBundlesTest extends SpringBaseTes
 					
 					TrustBundle bundle = new TrustBundle();
 					bundle.setBundleName("testBundle1");
-					bundle.setBundleURL("http://10.2.3.2/bundle");
+					bundle.setBundleURL("http://localhost:9999/bundle");
 					bundle.setRefreshInterval(24);
 					bundle.setSigningCertificateData(null);		
 					bundles.add(bundle);
@@ -108,7 +107,7 @@ public class DefaultTrustBundleService_getTrustBundlesTest extends SpringBaseTes
 					
 					bundle = new TrustBundle();
 					bundle.setBundleName("testBundle2");
-					bundle.setBundleURL("http://10.2.3.2/bundle2");
+					bundle.setBundleURL("http://localhost:9999/bundle2");
 					bundle.setRefreshInterval(12);
 					bundle.setSigningCertificateData(null);
 					
